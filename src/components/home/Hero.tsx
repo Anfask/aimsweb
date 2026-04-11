@@ -102,7 +102,7 @@ export default function Hero() {
                                         <span className="text-[12px] font-medium text-slate-500">Join Our Community</span>
                                     </div>
                                 </div>
-                                <a 
+                                <a
                                     href="https://chat.whatsapp.com/EuN3RJA0u8y4hexHboUlMQ"
                                     target="_blank"
                                     rel="noopener noreferrer"
@@ -112,14 +112,14 @@ export default function Hero() {
                                 </a>
                             </div>
 
-                            {/* Floating Card 2 (100+ Courses) */}
+                            {/* Floating Card 2 (200+ Courses) */}
                             <div className="absolute top-[45%] right-0 sm:right-0 xl:-right-6 bg-white/98 backdrop-blur-xl pl-3 pr-6 py-3 rounded-full shadow-[0_24px_40px_-12px_rgba(121,77,0,0.15)] flex items-center gap-4 animate-float-delayed border border-[#794d00]/5">
                                 <div className="w-12 h-12 rounded-full bg-[#794d00] flex items-center justify-center text-white shrink-0 shadow-inner">
                                     <ArrowUpRight size={22} strokeWidth={2.5} />
                                 </div>
                                 <div className="flex flex-col justify-center">
-                                    <span className="font-bold text-[17px] text-slate-900 leading-[1.1]">100+</span>
-                                    <span className="text-[14px] font-semibold text-slate-500">Online courses</span>
+                                    <span className="font-bold text-[17px] text-slate-900 leading-[1.1]">200+</span>
+                                    <span className="text-[14px] font-semibold text-slate-500">Online & Offline Courses</span>
                                 </div>
                             </div>
 
