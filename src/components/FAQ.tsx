@@ -5,8 +5,8 @@ import { Plus, Minus } from "lucide-react"
 
 const faqs = [
     {
-        question: "Do I need any prior coding knowledge to join?",
-        answer: "No, many of our courses are designed for beginners. We provide fundamental training to help you build a strong foundation before moving into advanced topics."
+        question: "Is AIMS Training Center ACTVET Licensed?",
+        answer: "Yes, AIMS Training Center is fully licensed by the Abu Dhabi Centre for Technical and Vocational Education and Training (ACTVET). This licensure ensures that our programs meet the highest quality standards for technical and vocational education in the UAE, providing our students with credible, government-recognized certifications."
     },
     {
         question: "Will I get a certificate after completing the course?",

@@ -6,6 +6,8 @@ import { Search, BookOpen, Clock, ChevronRight, TrendingUp, ArrowRight, Star, X 
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useCourses } from "@/hooks/useCourse"
+import ContactForm from "@/components/ContactForm"
+import FAQ from "@/components/FAQ"
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -349,6 +351,8 @@ export default function Courses() {
                     </div>
                 )}
             </div>
+            <ContactForm />
+            <FAQ />
         </div>
     )
 }

@@ -93,3 +93,44 @@ export const Youtube = ({ size = 24, ...props }: IconProps) => (
         <polygon points="9.75 15.02 15.5 11.75 9.75 8.48 9.75 15.02" />
     </svg>
 )
+
+export const Whatsapp = ({ size = 24, ...props }: IconProps) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        {...props}
+    >
+        {/* Speech bubble with tail */}
+        <path d="M12 2C6.48 2 2 6.26 2 11.5c0 2.92 1.45 5.52 3.72 7.24L5 22l3.18-1.66C9.39 20.77 10.67 21 12 21c5.52 0 10-4.26 10-9.5S17.52 2 12 2z" />
+        {/* Phone handset */}
+        <path d="M8.5 9.5c-.2-.8.4-1.8 1.2-1.8l1 .2c.4.2.4.8.2 1.2l-.8 1.4c.3.5.7.9 1.1 1.3.4.4.8.8 1.3 1.1l1.4-.8c.4-.2 1-.2 1.2.2l.2 1c.2.8-.8 1.4-1.6 1.2-2.2-.6-3.6-2-4-4z" />
+    </svg>
+)
+
+// Filled variant
+export const WhatsappFilled = ({ size = 24, color = "#25D366", ...props }: IconProps & { color?: string }) => (
+    <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width={size}
+        height={size}
+        viewBox="0 0 24 24"
+        fill="none"
+        {...props}
+    >
+        <path
+            d="M12 2C6.48 2 2 6.26 2 11.5c0 2.92 1.45 5.52 3.72 7.24L5 22l3.18-1.66C9.39 20.77 10.67 21 12 21c5.52 0 10-4.26 10-9.5S17.52 2 12 2z"
+            fill={color}
+        />
+        <path
+            d="M8.5 9.5c-.2-.8.4-1.8 1.2-1.8l1 .2c.4.2.4.8.2 1.2l-.8 1.4c.3.5.7.9 1.1 1.3.4.4.8.8 1.3 1.1l1.4-.8c.4-.2 1-.2 1.2.2l.2 1c.2.8-.8 1.4-1.6 1.2-2.2-.6-3.6-2-4-4z"
+            fill="white"
+        />
+    </svg>
+)

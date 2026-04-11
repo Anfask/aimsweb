@@ -21,8 +21,8 @@ gsap.registerPlugin(ScrollTrigger)
    Exact clone of ContactForm – glassmorphic style
    Used in Hero (enroll) and Curriculum (brochure)
 ───────────────────────────────────────── */
-function CourseEnquiryForm({ submitLabel = "Submit Now" }: { submitLabel?: string }) {
-    const [formData, setFormData] = useState({ name: "", contact: "", email: "", location: "" })
+function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { submitLabel?: string, defaultCourse?: string }) {
+    const [formData, setFormData] = useState({ name: "", contact: "", email: "", course: defaultCourse || "" })
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [isSubmitted, setIsSubmitted] = useState(false)
 
@@ -33,7 +33,7 @@ function CourseEnquiryForm({ submitLabel = "Submit Now" }: { submitLabel?: strin
         else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = "Invalid email format"
         if (!formData.contact.trim()) e.contact = "Contact number is required"
         else if (!/^[0-9+\s-]{7,15}$/.test(formData.contact)) e.contact = "Invalid contact number"
-        if (!formData.location.trim()) e.location = "Location is required"
+        if (!formData.course) e.course = "Please select a course"
         setErrors(e)
         return Object.keys(e).length === 0
     }
@@ -42,7 +42,7 @@ function CourseEnquiryForm({ submitLabel = "Submit Now" }: { submitLabel?: strin
         ev.preventDefault()
         if (validate()) {
             setIsSubmitted(true)
-            setFormData({ name: "", contact: "", email: "", location: "" })
+            setFormData({ name: "", contact: "", email: "", course: defaultCourse || "" })
         }
     }
 
@@ -108,14 +108,14 @@ function CourseEnquiryForm({ submitLabel = "Submit Now" }: { submitLabel?: strin
                         {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.email}</p>}
                     </div>
                     <div className="space-y-2">
-                        <label className="text-[14px] font-medium text-white ml-1">Location</label>
+                        <label className="text-[14px] font-medium text-white ml-1">Course Interested</label>
                         <input
                             type="text"
-                            value={formData.location}
-                            onChange={e => setFormData({ ...formData, location: e.target.value })}
-                            className={inputCls("location")}
+                            value={formData.course}
+                            readOnly
+                            className={`${inputCls("course")} cursor-not-allowed opacity-80`}
                         />
-                        {errors.location && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.location}</p>}
+                        {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.course}</p>}
                     </div>
                 </div>
             </div>
@@ -316,7 +316,7 @@ export default function CourseDetail() {
 
                         {/* Right: glassmorphic enroll form */}
                         <div id="enroll-form" className="hero-reveal">
-                            <CourseEnquiryForm submitLabel="Submit Now" />
+                            <CourseEnquiryForm submitLabel="Submit Now" defaultCourse={course.title} />
                         </div>
 
                     </div>
@@ -529,7 +529,7 @@ export default function CourseDetail() {
                 </div>
             </section>
             <WhyChooseAIMS />
-            <ContactForm />
+            <ContactForm defaultCourse={course.title} />
             <FAQ />
         </div>
     )

@@ -60,9 +60,11 @@ export default function FeaturedCourses() {
         )
     }
 
-    // Select the 4 main signature category overviews to feature
-    const featuredIds = ['finance-accounting', 'office-administration', 'engineering-cad', 'graphic-design-animation']
-    const featuredCourses = courses.filter(c => featuredIds.includes(c.id))
+    // Select the 4 main signature category overviews to feature with specific priority
+    const featuredIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting']
+    const featuredCourses = featuredIds
+        .map(id => courses.find(c => c.id === id))
+        .filter((c): c is NonNullable<typeof c> => !!c)
 
     return (
         <section

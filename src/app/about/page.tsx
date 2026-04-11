@@ -52,7 +52,7 @@ export default function About() {
                     <div className="max-w-4xl mx-auto flex flex-col items-center">
                         {/* Glowing Sub-header */}
                         <span className="reveal-item inline-block font-extrabold tracking-[0.3em] text-blue-500 uppercase text-xs sm:text-sm drop-shadow-[0_0_10px_rgba(59,130,246,0.3)] mb-8">
-                            About AIMS Training Center
+                            About AIMS Training Center - ABU DHABI
                         </span>
 
                         {/* Main Title Area */}
@@ -63,7 +63,7 @@ export default function About() {
 
                             {/* Short Intro */}
                             <p className="reveal-item text-lg md:text-xl text-slate-300 max-w-2xl mx-auto font-medium leading-relaxed font-figtree opacity-80">
-                                Empowering professionals in Abu Dhabi through specialized training in Technical, Vocational, and Soft Skills development.
+                                Empowering professionals in AIMS through specialized training in Technical, Vocational, and Soft Skills development.
                             </p>
                         </div>
 

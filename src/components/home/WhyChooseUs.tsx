@@ -11,9 +11,9 @@ gsap.registerPlugin(ScrollTrigger)
 const features = [
     {
         icon: <Award size={32} />,
-        title: "KHDA Certified",
+        title: "ACTVET Licenced",
         description: "Official government recognition ensuring your training meets the highest UAE regulatory standards.",
-        stat: "Gov. Certified",
+        stat: "Gov. Licenced",
     },
     {
         icon: <Layout size={32} />,
