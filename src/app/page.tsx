@@ -1,6 +1,7 @@
 "use client"
 
 import Hero from "@/components/home/Hero"
+import BrandSlider from "@/components/home/BrandSlider"
 import FeaturedCourses from "@/components/home/FeaturedCourses"
 import WhyChooseUs from "@/components/home/WhyChooseUs"
 import Stats from "@/components/home/Stats"
@@ -13,6 +14,7 @@ export default function Home() {
   return (
     <div className="home-page overflow-x-hidden">
       <Hero />
+      <BrandSlider />
       <FeaturedCourses />
       <WhyChooseUs />
       <Stats />

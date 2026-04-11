@@ -16,7 +16,7 @@ export default function Footer() {
     const linksRef = useRef<HTMLDivElement>(null)
     const contactRef = useRef<HTMLDivElement>(null)
     const ctaRef = useRef<HTMLDivElement>(null)
-    
+
     // State for user's current location
     const [userLocation, setUserLocation] = useState("Abu Dhabi, UAE")
 
@@ -43,14 +43,14 @@ export default function Footer() {
                 // Using a signal with timeout to prevent hanging
                 const controller = new AbortController()
                 const timeoutId = setTimeout(() => controller.abort(), 3000)
-                
+
                 const response = await fetch("https://ipapi.co/json/", { signal: controller.signal })
                 clearTimeout(timeoutId)
-                
+
                 const data = await response.json()
                 if (data.city && data.country_name) {
                     setUserLocation(`${data.city}, ${data.country_name}`)
-                    
+
                     // Refresh ScrollTrigger silently
                     setTimeout(() => {
                         ScrollTrigger.refresh()
@@ -158,7 +158,7 @@ export default function Footer() {
                             <div className="flex gap-4 group">
                                 <Phone size={24} className="text-blue-500 shrink-0 group-hover:scale-110 transition-transform" />
                                 <a href="tel:+971026724334" className="text-white hover:text-white/80 transition-colors py-1">
-                                    +971 026724334
+                                    +971 26724334
                                 </a>
                             </div>
                             <div className="flex gap-4 group">

@@ -100,7 +100,7 @@ export default function Contact() {
                                     <span className="inline-block px-4 py-1 bg-blue-500/10 border border-blue-500/20 text-blue-400 font-bold rounded-full text-[10px] uppercase tracking-wider">
                                         Call Us:
                                     </span>
-                                    <p className="text-lg sm:text-xl font-normal text-white/90 leading-relaxed font-figtree tracking-tight">+971 026724334</p>
+                                    <p className="text-lg sm:text-xl font-normal text-white/90 leading-relaxed font-figtree tracking-tight">+971 26724334</p>
                                 </div>
 
                                 {/* Send Message */}

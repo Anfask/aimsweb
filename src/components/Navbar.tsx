@@ -18,8 +18,7 @@ export default function Navbar() {
         { name: "About", path: "/about" },
         { name: "Courses", path: "/courses", hasDropdown: true },
         { name: "Enroll as Trainer", path: "/enroll" },
-        { name: "Blogs", path: "/blogs" },
-        { name: "Contact Us", path: "/contact" },
+        { name: "Blogs", path: "/blogs" }
     ]
 
     useEffect(() => {
@@ -33,7 +32,7 @@ export default function Navbar() {
     const isActive = (path: string) => pathname === path
 
     // Define the specific signature categories for the navigation
-    const navCourses = courses.filter(c => 
+    const navCourses = courses.filter(c =>
         ['finance-accounting', 'office-administration', 'engineering-cad', 'graphic-design-animation'].includes(c.id)
     )
 
