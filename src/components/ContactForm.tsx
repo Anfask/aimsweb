@@ -1,7 +1,8 @@
 "use client"
 
-import { useState } from "react"
-import { AlertCircle, Check } from "lucide-react"
+import { useState, useRef, useEffect } from "react"
+import { AlertCircle, Check, ChevronDown, Search } from "lucide-react"
+import { coursesData } from "@/data/courses"
 
 interface ContactFormProps {
   defaultCourse?: string;
@@ -16,6 +17,32 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
   })
   const [errors, setErrors] = useState<Record<string, string>>({})
   const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+  const [searchTerm, setSearchTerm] = useState("")
+  const dropdownRef = useRef<HTMLDivElement>(null)
+
+  // Group courses by category, applying search filter
+  const groupedCourses = Object.values(coursesData).reduce((acc, course) => {
+    if (course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        course.category.toLowerCase().includes(searchTerm.toLowerCase())) {
+      if (!acc[course.category]) acc[course.category] = []
+      // Prevent duplicates if multiple course variations exist
+      if (!acc[course.category].includes(course.title)) {
+          acc[course.category].push(course.title)
+      }
+    }
+    return acc
+  }, {} as Record<string, string[]>)
+
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+        setIsDropdownOpen(false)
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside)
+    return () => document.removeEventListener("mousedown", handleClickOutside)
+  }, [])
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -79,8 +106,8 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
               </button>
             </div>
           ) : (
-            <div className="w-full bg-white/10 backdrop-blur-xl px-8 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-8 overflow-hidden relative group">
-              <div className="space-y-6 relative z-10 transition-all">
+            <div className="w-full bg-white/10 backdrop-blur-xl px-8 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-8 relative group">
+              <div className="space-y-6 relative z-50 transition-all">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[14px] font-medium text-white ml-1">Full Name</label>
@@ -114,70 +141,67 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
                     />
                     {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.email}</p>}
                   </div>
-                  <div className="space-y-2">
+                  <div className="space-y-2 relative" ref={dropdownRef}>
                     <label className="text-[14px] font-medium text-white ml-1">Course Interested</label>
-                    <select
-                      value={formData.course}
-                      disabled={!!defaultCourse}
-                      onChange={(e) => setFormData({ ...formData, course: e.target.value })}
-                      className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.course ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal appearance-none cursor-pointer ${defaultCourse ? 'opacity-70 cursor-not-allowed' : ''}`}
-                    >
-                      <option value="" className="bg-[#020617] text-white">Select a Course</option>
-                      
-                      <optgroup label="Finance & Accounting" className="bg-[#020617] text-blue-400 font-bold">
-                        <option value="Tally Prime" className="text-white bg-[#020617]">Tally Prime</option>
-                        <option value="QuickBooks" className="text-white bg-[#020617]">QuickBooks</option>
-                        <option value="SAP FICO" className="text-white bg-[#020617]">SAP FICO</option>
-                        <option value="Sage 50" className="text-white bg-[#020617]">Sage 50 (Peachtree)</option>
-                        <option value="UAE VAT" className="text-white bg-[#020617]">UAE VAT Training</option>
-                      </optgroup>
+                    <div className="relative group/input">
+                      <input
+                        type="text"
+                        placeholder="Type to search or enter course..."
+                        value={formData.course}
+                        readOnly={!!defaultCourse}
+                        onFocus={() => !defaultCourse && setIsDropdownOpen(true)}
+                        onChange={(e) => {
+                          setFormData({ ...formData, course: e.target.value })
+                          setSearchTerm(e.target.value)
+                          setIsDropdownOpen(true)
+                        }}
+                        className={`w-full px-5 py-4 pr-12 rounded-lg bg-white/[0.03] border ${errors.course ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal ${defaultCourse ? 'opacity-70 cursor-not-allowed' : 'cursor-text'}`}
+                      />
+                      {!defaultCourse && (
+                        <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-white/40 group-focus-within/input:text-blue-400 transition-colors pointer-events-none">
+                          <Search size={18} />
+                          <ChevronDown size={18} className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                        </div>
+                      )}
+                    </div>
 
-                      <optgroup label="Office Administration" className="bg-[#020617] text-blue-400 font-bold">
-                        <option value="Advanced Excel" className="text-white bg-[#020617]">Advanced Excel</option>
-                        <option value="MS Office" className="text-white bg-[#020617]">MS Office</option>
-                        <option value="ICDL" className="text-white bg-[#020617]">ICDL</option>
-                        <option value="Executive Secretary" className="text-white bg-[#020617]">Executive Secretary</option>
-                        <option value="Document Control" className="text-white bg-[#020617]">Document Control</option>
-                      </optgroup>
-
-                      <optgroup label="Engineering & CAD" className="bg-[#020617] text-blue-400 font-bold">
-                        <option value="AutoCAD" className="text-white bg-[#020617]">AutoCAD 2D/3D</option>
-                        <option value="Revit Architecture" className="text-white bg-[#020617]">Revit Architecture</option>
-                        <option value="Revit Structure" className="text-white bg-[#020617]">Revit Structure</option>
-                        <option value="Revit MEP" className="text-white bg-[#020617]">Revit MEP</option>
-                        <option value="Civil 3D" className="text-white bg-[#020617]">Civil 3D</option>
-                        <option value="Solidworks" className="text-white bg-[#020617]">Solidworks</option>
-                        <option value="3ds Max" className="text-white bg-[#020617]">3ds Max & V-Ray</option>
-                      </optgroup>
-
-                      <optgroup label="Graphic Design & Animation" className="bg-[#020617] text-blue-400 font-bold">
-                        <option value="Graphic Design" className="text-white bg-[#020617]">Graphic Design & Multimedia</option>
-                        <option value="3D Animation" className="text-white bg-[#020617]">3D Modeling & Animation</option>
-                        <option value="Motion Graphics" className="text-white bg-[#020617]">Motion Graphics (After Effects)</option>
-                        <option value="Video Editing" className="text-white bg-[#020617]">Video Editing</option>
-                      </optgroup>
-
-                      <optgroup label="Project Management" className="bg-[#020617] text-blue-400 font-bold">
-                        <option value="PMP" className="text-white bg-[#020617]">PMP Certification</option>
-                        <option value="Primavera P6" className="text-white bg-[#020617]">Primavera P6</option>
-                        <option value="MS Project" className="text-white bg-[#020617]">MS Project</option>
-                      </optgroup>
-
-                      <optgroup label="IT & Networking" className="bg-[#020617] text-blue-400 font-bold">
-                        <option value="CCNA" className="text-white bg-[#020617]">Cisco CCNA</option>
-                        <option value="CCNP" className="text-white bg-[#020617]">Cisco CCNP</option>
-                        <option value="CompTIA" className="text-white bg-[#020617]">CompTIA (A+, N+, S+)</option>
-                        <option value="Flutter" className="text-white bg-[#020617]">Flutter Development</option>
-                      </optgroup>
-
-                      <optgroup label="Language" className="bg-[#020617] text-blue-400 font-bold">
-                        <option value="IELTS" className="text-white bg-[#020617]">IELTS Prep</option>
-                        <option value="OET" className="text-white bg-[#020617]">OET (Nurses/Doctors)</option>
-                        <option value="Spoken English" className="text-white bg-[#020617]">Spoken English</option>
-                        <option value="Spoken Arabic" className="text-white bg-[#020617]">Spoken Arabic</option>
-                      </optgroup>
-                    </select>
-                    {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.course}</p>}
+                    {/* Custom Searchable Dropdown */}
+                    {isDropdownOpen && !defaultCourse && (
+                      <div className="absolute top-[calc(100%+8px)] left-0 w-full z-[100] bg-[#0f172a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl max-h-[280px] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/10 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                        {Object.keys(groupedCourses).length > 0 ? (
+                          Object.entries(groupedCourses).map(([category, titles]) => (
+                            <div key={category} className="mb-2 last:mb-0">
+                              <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#c8915a] bg-[#794d00]/10 rounded-lg mb-1 sticky top-0 z-10 backdrop-blur-md">
+                                {category}
+                              </div>
+                              <div className="space-y-0.5">
+                                {titles.map((title, i) => (
+                                  <button
+                                    key={i}
+                                    type="button"
+                                    onClick={() => {
+                                      setFormData({ ...formData, course: title })
+                                      setSearchTerm(title)
+                                      setIsDropdownOpen(false)
+                                    }}
+                                    className="w-full text-left px-4 py-2.5 rounded-xl text-[13px] text-white/80 hover:text-white hover:bg-white/10 transition-all font-medium flex items-center justify-between group"
+                                  >
+                                    {title}
+                                    <Check size={14} className={`text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity ${formData.course === title ? 'opacity-100' : ''}`} />
+                                  </button>
+                                ))}
+                              </div>
+                            </div>
+                          ))
+                        ) : (
+                          <div className="px-4 py-8 text-center space-y-2">
+                            <p className="text-[13px] text-white/40 italic">No matching courses found.</p>
+                            <p className="text-[11px] text-[#c8915a] font-bold uppercase tracking-widest">You can keep typing your own...</p>
+                          </div>
+                        )}
+                      </div>
+                    )}
+                    {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1 mt-1"><AlertCircle size={10} /> {errors.course}</p>}
                   </div>
                 </div>
               </div>

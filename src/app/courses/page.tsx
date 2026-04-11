@@ -1,6 +1,7 @@
 "use client"
 
-import { useState, useEffect, useRef, useMemo } from "react"
+import { useState, useEffect, useRef, useMemo, Suspense } from "react"
+import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Search, BookOpen, Clock, ChevronRight, TrendingUp, ArrowRight, Star, X } from "lucide-react"
 import gsap from "gsap"
@@ -22,12 +23,21 @@ const CATEGORY_ORDER = [
     "Language",
 ]
 
-export default function Courses() {
+const SIGNATURE_COURSE_IDS = [
+    'finance-accounting',
+    'office-administration',
+    'engineering-cad',
+    'graphic-design-animation',
+    'network-it'
+]
+
+function CoursesContent() {
     const [searchTerm, setSearchTerm] = useState("")
     const [activeCategory, setActiveCategory] = useState<string | null>(null)
     const { courses: coursesData, loading } = useCourses()
     const containerRef = useRef<HTMLDivElement>(null)
     const stickyBarRef = useRef<HTMLDivElement>(null)
+    const searchParams = useSearchParams()
 
     // Filter
     const filteredCourses = useMemo(() => coursesData.filter(course =>
@@ -35,10 +45,13 @@ export default function Courses() {
         course.category.toLowerCase().includes(searchTerm.toLowerCase())
     ), [coursesData, searchTerm])
 
-    // Grouped & ordered
+    // Grouped & ordered - Exclude signature cards from the list
     const groupedCourses = useMemo(() => {
         const groups: Record<string, typeof coursesData> = {}
         filteredCourses.forEach(course => {
+            // Fix: skip signature courses to avoid duplication of the category title as a card
+            if (SIGNATURE_COURSE_IDS.includes(course.id)) return
+            
             if (!groups[course.category]) groups[course.category] = []
             groups[course.category].push(course)
         })
@@ -56,8 +69,21 @@ export default function Courses() {
         [coursesData]
     )
 
+    // Handle category from URL
     useEffect(() => {
-        if (loading) return
+        if (!loading && coursesData.length > 0) {
+            const cat = searchParams.get("category")
+            if (cat) {
+                // Small delay to ensure layout is ready
+                setTimeout(() => {
+                    scrollToCategory(decodeURIComponent(cat))
+                }, 500)
+            }
+        }
+    }, [loading, searchParams, coursesData])
+
+    useEffect(() => {
+        if (loading || coursesData.length === 0) return
         const ctx = gsap.context(() => {
             gsap.from(".hero-reveal", {
                 y: 30,
@@ -66,18 +92,9 @@ export default function Courses() {
                 duration: 0.8,
                 ease: "power3.out",
             })
-            gsap.from(".popular-card", {
-                y: 40,
-                opacity: 0,
-                stagger: 0.08,
-                duration: 0.6,
-                ease: "power2.out",
-                delay: 0.3,
-                scrollTrigger: { trigger: ".popular-section", start: "top 85%" }
-            })
         }, containerRef)
         return () => ctx.revert()
-    }, [loading])
+    }, [loading, coursesData.length])
 
     const scrollToCategory = (cat: string) => {
         setActiveCategory(cat)
@@ -192,7 +209,7 @@ export default function Courses() {
                             {popularCourses.map((course, idx) => (
                                 <div
                                     key={course.id}
-                                    className="popular-card bg-white p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] duration-300 flex flex-col gap-6 group relative"
+                                    className="bg-white p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] duration-300 flex flex-col gap-6 group relative"
                                 >
                                     {/* Trending badge */}
                                     <div className="absolute top-5 right-5 text-amber-500 bg-amber-50 p-1.5 rounded-lg">
@@ -354,5 +371,17 @@ export default function Courses() {
             <ContactForm />
             <FAQ />
         </div>
+    )
+}
+
+export default function Courses() {
+    return (
+        <Suspense fallback={
+            <div className="min-h-screen bg-[#fffbf5] flex items-center justify-center">
+                <div className="w-10 h-10 border-4 border-[#794d00]/20 border-t-[#794d00] rounded-full animate-spin" />
+            </div>
+        }>
+            <CoursesContent />
+        </Suspense>
     )
 }

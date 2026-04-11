@@ -44,6 +44,7 @@ export default function FeaturedCourses() {
             case 'Office Administration': return <Briefcase size={size} />
             case 'Engineering and CAD': return <Compass size={size} />
             case 'Graphic Design and Animation': return <Palette size={size} />
+            case 'IT & Networking': return <Wind size={size} aria-label="Network" />
             default: return <BookOpen size={size} />
         }
     }
@@ -60,8 +61,8 @@ export default function FeaturedCourses() {
         )
     }
 
-    // Select the 4 main signature category overviews to feature with specific priority
-    const featuredIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting']
+    // Select the 5 main signature category overviews to feature with specific priority
+    const featuredIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting', 'network-it']
     const featuredCourses = featuredIds
         .map(id => courses.find(c => c.id === id))
         .filter((c): c is NonNullable<typeof c> => !!c)
@@ -89,7 +90,7 @@ export default function FeaturedCourses() {
                 </div>
 
                 {/* ── Cards Grid ── */}
-                <div className="courses-grid grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="courses-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {featuredCourses.map((course, idx) => (
                         <div
                             key={course.id}
@@ -118,10 +119,10 @@ export default function FeaturedCourses() {
                             {/* CTA */}
                             <div className="pt-4 border-t border-slate-50">
                                 <Link
-                                    href={`/courses/${course.id}`}
+                                    href={`/courses?category=${encodeURIComponent(course.category)}`}
                                     className="inline-flex items-center gap-3 text-[10px] font-black tracking-widest uppercase text-[#794d00] hover:text-slate-900 transition-colors group/link"
                                 >
-                                    Learn More
+                                    Explore Program
                                     <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
                                 </Link>
                             </div>

@@ -31,10 +31,11 @@ export default function Navbar() {
 
     const isActive = (path: string) => pathname === path
 
-    // Define the specific signature categories for the navigation
-    const navCourses = courses.filter(c =>
-        ['finance-accounting', 'office-administration', 'engineering-cad', 'graphic-design-animation'].includes(c.id)
-    )
+    // Define the specific signature categories for the navigation with requested priority order
+    const priorityIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting', 'network-it']
+    const navCourses = priorityIds
+        .map(id => courses.find(c => c.id === id))
+        .filter((c): c is NonNullable<typeof c> => !!c)
 
     return (
         <div
@@ -79,7 +80,7 @@ export default function Navbar() {
                                             {navCourses.map(course => (
                                                 <Link
                                                     key={course.id}
-                                                    href={`/courses/${course.id}`}
+                                                    href={`/courses?category=${encodeURIComponent(course.category)}`}
                                                     className="px-4 py-3 hover:bg-slate-50 rounded-xl transition-colors text-slate-800 font-bold tracking-widest uppercase text-[11px] hover:text-blue-500"
                                                 >
                                                     {course.title}

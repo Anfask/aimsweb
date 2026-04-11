@@ -52,6 +52,16 @@ export const coursesData: { [key: string]: Course } = {
         description: 'Professional visual communication using Adobe Suite, 3D Animation, and Motion Graphics.',
         curriculum: ['Graphic Design & Multimedia', '2D/3D Animation', 'Product Modeling', 'Motion Graphics After Effects']
     },
+    'network-it': {
+        id: 'network-it',
+        title: 'IT & Networking',
+        category: 'IT & Networking',
+        duration: 'High-Tech',
+        level: 'Specialist',
+        seats: 'Available',
+        description: 'Master Cisco networking, CompTIA security, and modern cloud infrastructure for the IT industry.',
+        curriculum: ['Cisco CCNA/CCNP', 'CompTIA A+/N+/S+', 'Cloud Computing Basics', 'Network Security']
+    },
 
     // 1. Finance & Accounting
     'tally': {

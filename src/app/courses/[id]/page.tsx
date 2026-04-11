@@ -5,8 +5,9 @@ import { useParams } from "next/navigation"
 import {
     Clock, BookOpen, Users, ArrowLeft,
     Plus, Minus, Award, ArrowRight,
-    AlertCircle, Check, Download
+    AlertCircle, Check, Download, Search, ChevronDown
 } from "lucide-react"
+import { coursesData } from "@/data/courses"
 import Link from "next/link"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
@@ -25,6 +26,31 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
     const [formData, setFormData] = useState({ name: "", contact: "", email: "", course: defaultCourse || "" })
     const [errors, setErrors] = useState<Record<string, string>>({})
     const [isSubmitted, setIsSubmitted] = useState(false)
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [searchTerm, setSearchTerm] = useState(defaultCourse || "")
+    const dropdownRef = useRef<HTMLDivElement>(null)
+
+    // Group courses by category, applying search filter
+    const groupedCourses = Object.values(coursesData).reduce((acc, course) => {
+        if (course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+            course.category.toLowerCase().includes(searchTerm.toLowerCase())) {
+            if (!acc[course.category]) acc[course.category] = []
+            if (!acc[course.category].includes(course.title)) {
+                acc[course.category].push(course.title)
+            }
+        }
+        return acc
+    }, {} as Record<string, string[]>)
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false)
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside)
+        return () => document.removeEventListener("mousedown", handleClickOutside)
+    }, [])
 
     const validate = () => {
         const e: Record<string, string> = {}
@@ -72,8 +98,8 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
         `w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors[field] ? "border-red-500/50" : "border-white/10"} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal`
 
     return (
-        <div className="w-full bg-white/10 backdrop-blur-xl px-8 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-8 overflow-hidden relative">
-            <div className="space-y-6 relative z-10">
+        <div className="w-full bg-white/10 backdrop-blur-xl px-8 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-8 relative">
+            <div className="space-y-6 relative z-50">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="text-[14px] font-medium text-white ml-1">Full Name</label>
@@ -107,15 +133,67 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
                         />
                         {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.email}</p>}
                     </div>
-                    <div className="space-y-2">
+                    <div className="space-y-2 relative" ref={dropdownRef}>
                         <label className="text-[14px] font-medium text-white ml-1">Course Interested</label>
-                        <input
-                            type="text"
-                            value={formData.course}
-                            readOnly
-                            className={`${inputCls("course")} cursor-not-allowed opacity-80`}
-                        />
-                        {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.course}</p>}
+                        <div className="relative group/input">
+                            <input
+                                type="text"
+                                placeholder="Type to search..."
+                                value={formData.course}
+                                readOnly={!!defaultCourse}
+                                onFocus={() => !defaultCourse && setIsDropdownOpen(true)}
+                                onChange={(e) => {
+                                    setFormData({ ...formData, course: e.target.value })
+                                    setSearchTerm(e.target.value)
+                                    setIsDropdownOpen(true)
+                                }}
+                                className={`w-full px-5 py-4 ${!defaultCourse ? 'pr-12' : ''} rounded-lg bg-white/[0.03] border ${errors.course ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal ${defaultCourse ? 'opacity-80 cursor-not-allowed' : 'cursor-text'}`}
+                            />
+                            {!defaultCourse && (
+                                <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-2 text-white/40 group-focus-within/input:text-blue-400 transition-colors pointer-events-none">
+                                    <Search size={18} />
+                                    <ChevronDown size={18} className={`transition-transform duration-300 ${isDropdownOpen ? 'rotate-180' : ''}`} />
+                                </div>
+                            )}
+                        </div>
+
+                        {/* Custom Searchable Dropdown */}
+                        {isDropdownOpen && !defaultCourse && (
+                            <div className="absolute top-[calc(100%+8px)] left-0 w-full z-[100] bg-[#0f172a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl max-h-[280px] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/10 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                                {Object.keys(groupedCourses).length > 0 ? (
+                                    Object.entries(groupedCourses).map(([category, titles]) => (
+                                        <div key={category} className="mb-2 last:mb-0">
+                                            <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#c8915a] bg-[#794d00]/10 rounded-lg mb-1 sticky top-0 z-10 backdrop-blur-md">
+                                                {category}
+                                            </div>
+                                            <div className="space-y-0.5">
+                                                {titles.map((title, i) => (
+                                                    <button
+                                                        key={i}
+                                                        type="button"
+                                                        onClick={() => {
+                                                            setFormData({ ...formData, course: title })
+                                                            setSearchTerm(title)
+                                                            setIsDropdownOpen(false)
+                                                        }}
+                                                        className="w-full text-left px-4 py-2.5 rounded-xl text-[13px] text-white/80 hover:text-white hover:bg-white/10 transition-all font-medium flex items-center justify-between group"
+                                                    >
+                                                        {title}
+                                                        <Check size={14} className={`text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity ${formData.course === title ? 'opacity-100' : ''}`} />
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        </div>
+                                    ))
+                                ) : (
+                                    <div className="px-4 py-8 text-center space-y-2">
+                                        <p className="text-[13px] text-white/40 italic">No matching courses found.</p>
+                                        <p className="text-[11px] text-[#c8915a] font-bold uppercase tracking-widest">You can keep typing your own...</p>
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                        {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1 mt-1"><AlertCircle size={10} />{errors.course}</p>}
                     </div>
                 </div>
             </div>
@@ -141,24 +219,26 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
 function CurriculumItem({ index, item }: { index: number; item: string }) {
     const [open, setOpen] = useState(false)
     return (
-        <div className="border border-slate-200 rounded-xl mb-4 bg-white overflow-hidden transition-all hover:border-slate-300">
+        <div className="border border-slate-200 rounded-xl mb-4 bg-white overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:border-slate-300">
             <button
                 onClick={() => setOpen(o => !o)}
-                className="w-full flex items-center gap-4 px-6 py-5 text-left group"
+                className="w-full flex items-center gap-4 px-6 py-5 text-left group hover:bg-blue-50 transition-colors"
             >
-                <span className="text-slate-800 shrink-0">
-                    {open ? <Minus size={16} /> : <Plus size={16} />}
-                </span>
-                <span className="text-[14px] font-bold text-slate-800 group-hover:text-slate-900 transition-colors flex-1">
+                <div className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}>
+                    {open ? <Minus className="text-blue-600" size={16} /> : <Plus className="text-slate-400 group-hover:text-blue-600" size={16} />}
+                </div>
+                <span className={`text-[14px] font-bold transition-colors flex-1 ${open ? "text-[#794d00]" : "text-slate-800"}`}>
                     {item}
                 </span>
             </button>
-            {open && (
-                <div className="px-14 pb-6 pt-0 text-[13px] text-slate-500 font-medium leading-relaxed">
+            <div
+                className={`overflow-hidden transition-all duration-500 ease-in-out ${open ? "max-h-[500px] opacity-100 border-t border-blue-50" : "max-h-0 opacity-0"}`}
+            >
+                <div className="px-14 pb-6 pt-5 text-[13px] text-slate-500 font-medium leading-relaxed">
                     Hands-on training covering all core aspects of {item.toLowerCase()}, with practical exercises
                     tailored to UAE industry standards and employer expectations.
                 </div>
-            )}
+            </div>
         </div>
     )
 }
@@ -166,6 +246,15 @@ function CurriculumItem({ index, item }: { index: number; item: string }) {
 /* ═══════════════════════════════════════════════════════════
    PAGE
 ═══════════════════════════════════════════════════════════ */
+
+const SIGNATURE_COURSE_IDS = [
+    'finance-accounting',
+    'office-administration',
+    'engineering-cad',
+    'graphic-design-animation',
+    'network-it'
+]
+
 export default function CourseDetail() {
     const { id } = useParams()
     const { course, loading } = useCourse(id as string)
@@ -173,11 +262,11 @@ export default function CourseDetail() {
     const containerRef = useRef<HTMLDivElement>(null)
 
     let relatedCourses = allCourses
-        .filter(c => c.category === course?.category && c.id !== course?.id)
+        .filter(c => c.category === course?.category && c.id !== course?.id && !SIGNATURE_COURSE_IDS.includes(c.id))
         .slice(0, 3)
 
     if (relatedCourses.length === 0 && course && allCourses.length > 0) {
-        relatedCourses = allCourses.filter(c => c.id !== course.id).slice(0, 3)
+        relatedCourses = allCourses.filter(c => c.id !== course.id && !SIGNATURE_COURSE_IDS.includes(c.id)).slice(0, 3)
     }
 
     // Category → generated course image mapping
@@ -194,36 +283,23 @@ export default function CourseDetail() {
     const categoryImage = course ? (CATEGORY_IMAGES[course.category] ?? "/images/excellence.png") : "/images/excellence.png"
 
     useEffect(() => {
-        if (!loading && course) {
-            let ctx = gsap.context(() => {})
-            // Slight delay guarantees `relatedCourses` UI is mounted before GSAP triggers search for .related-reveal
-            const timer = setTimeout(() => {
-                ctx.add(() => {
-                    gsap.from(".hero-reveal", {
-                        y: 40, opacity: 0, stagger: 0.1, duration: 0.9, ease: "power3.out",
-                    })
-                    gsap.from(".overview-reveal", {
-                        y: 30, opacity: 0, stagger: 0.08, duration: 0.7, ease: "power2.out",
-                        scrollTrigger: { trigger: ".overview-section", start: "top 85%" },
-                    })
-                    gsap.from(".curriculum-reveal", {
-                        y: 30, opacity: 0, stagger: 0.06, duration: 0.7, ease: "power2.out",
-                        scrollTrigger: { trigger: ".curriculum-section", start: "top 85%" },
-                    })
-                    if (document.querySelector(".related-reveal")) {
-                        gsap.from(".related-reveal", {
-                            y: 30, opacity: 0, stagger: 0.08, duration: 0.6, ease: "power2.out",
-                            scrollTrigger: { trigger: ".related-section", start: "top 85%" },
-                        })
-                    }
+        if (!loading && course && allCourses.length > 0) {
+            const ctx = gsap.context(() => {
+                gsap.from(".hero-reveal", {
+                    y: 40, opacity: 0, stagger: 0.1, duration: 0.9, ease: "power3.out",
                 })
-            }, 50)
-            return () => {
-                clearTimeout(timer)
-                ctx.revert()
-            }
+                gsap.from(".overview-reveal", {
+                    y: 30, opacity: 0, stagger: 0.08, duration: 0.7, ease: "power2.out",
+                    scrollTrigger: { trigger: ".overview-section", start: "top 85%" },
+                })
+                gsap.from(".curriculum-reveal", {
+                    y: 30, opacity: 0, stagger: 0.06, duration: 0.7, ease: "power2.out",
+                    scrollTrigger: { trigger: ".curriculum-section", start: "top 85%" },
+                })
+            }, containerRef)
+            return () => ctx.revert()
         }
-    }, [loading, course, allCourses?.length || 0])
+    }, [loading, course, allCourses.length])
 
     /* ── Loading skeleton ── */
     if (loading) return (
@@ -457,7 +533,7 @@ export default function CourseDetail() {
                                     <div className="px-8 pt-8 pb-0">
                                         <h3 className="text-[17px] font-bold text-white tracking-wide">Download Brochure</h3>
                                     </div>
-                                    <CourseEnquiryForm submitLabel="Submit & Download" />
+                                    <CourseEnquiryForm submitLabel="Submit & Download" defaultCourse={course.title} />
                                 </div>
                             </div>
                         </div>
@@ -493,7 +569,7 @@ export default function CourseDetail() {
                                 {relatedCourses.map((rc) => (
                                     <div
                                         key={rc.id}
-                                        className="related-reveal group bg-white p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] duration-300 flex flex-col gap-6"
+                                        className="group bg-white p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] duration-300 flex flex-col gap-6"
                                     >
                                         <div className="flex items-center justify-between">
                                             <div className="text-blue-500 group-hover:scale-110 transition-transform duration-300">
