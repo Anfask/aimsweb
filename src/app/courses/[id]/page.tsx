@@ -3,8 +3,8 @@
 import { useCourse, useCourses } from "@/hooks/useCourse"
 import { useParams } from "next/navigation"
 import {
-    Clock, BookOpen, Users, ArrowLeft,
-    Plus, Minus, Award, ArrowRight,
+    Clock, BookOpen, ArrowLeft,
+    Plus, Minus, ArrowRight,
     AlertCircle, Check, Download, Search, ChevronDown
 } from "lucide-react"
 import { coursesData } from "@/data/courses"
@@ -32,7 +32,7 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
 
     // Group courses by category, applying search filter
     const groupedCourses = Object.values(coursesData).reduce((acc, course) => {
-        if (course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        if (course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             course.category.toLowerCase().includes(searchTerm.toLowerCase())) {
             if (!acc[course.category]) acc[course.category] = []
             if (!acc[course.category].includes(course.title)) {
@@ -453,11 +453,6 @@ export default function CourseDetail() {
                                     <div className="absolute inset-0 bg-gradient-to-t from-[#1e2a3b] via-[#1e2a3b]/30 to-transparent" />
                                     {/* Category icons overlay */}
                                     <div className="absolute top-4 left-4 flex items-center gap-2">
-                                        {[BookOpen, Award, Users, Clock].map((Icon, i) => (
-                                            <div key={i} className="w-8 h-8 rounded-lg bg-black/40 backdrop-blur-sm flex items-center justify-center text-white/70">
-                                                <Icon size={14} />
-                                            </div>
-                                        ))}
                                     </div>
                                 </div>
 
@@ -545,7 +540,7 @@ export default function CourseDetail() {
                     ══════════════════════════════════════════════════════ */}
                     {relatedCourses.length > 0 && (
                         <div className="related-section mt-16 pt-16 border-t border-slate-200/60">
-                            
+
                             <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6">
                                 <div className="space-y-2">
                                     <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">

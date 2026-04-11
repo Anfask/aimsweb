@@ -176,7 +176,7 @@ export default function Navbar() {
                     ))}
                     <Link
                         href="/contact"
-                        className="mt-6 w-full text-center py-4 rounded-xl font-bold text-[#0f172a] bg-[#f59e0b] transition-all active:scale-95"
+                        className="mt-6 w-full text-center py-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-900/40"
                         onClick={() => setIsOpen(false)}
                     >
                         ENQUIRE NOW
