@@ -203,7 +203,7 @@ export default function Footer() {
 
             {/* Large Decorative Text */}
             <div className="absolute bottom-0 right-0 pointer-events-none opacity-[0.04] select-none overflow-hidden">
-                <span className="text-[8rem] sm:text-[12rem] md:text-[16rem] lg:text-[20rem] xl:text-[25rem] font-black leading-none font-figtree uppercase block translate-x-[10%] translate-y-[20%]">
+                <span translate="no" className="notranslate text-[8rem] sm:text-[12rem] md:text-[16rem] lg:text-[20rem] xl:text-[25rem] font-black leading-none font-figtree uppercase block translate-x-[10%] translate-y-[20%]">
                     AIMS
                 </span>
             </div>

@@ -4,6 +4,7 @@ import "./globals.css";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import SmoothScroll from "@/components/SmoothScroll";
+import GoogleTranslate from "@/components/GoogleTranslate";
 
 import Script from "next/script";
 
@@ -28,6 +29,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body suppressHydrationWarning className={`${figtree.variable} antialiased font-figtree`}>
+        <GoogleTranslate />
         <SmoothScroll>
           <Navbar />
           <main className="min-h-screen">

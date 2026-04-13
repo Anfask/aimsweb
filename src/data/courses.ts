@@ -12,6 +12,16 @@ export interface Course {
 
 export const coursesData: { [key: string]: Course } = {
     // ── Signature Categories (Featured on Home) ──
+    'language-courses': {
+        id: 'language-courses',
+        title: 'Language Courses',
+        category: 'Language Courses',
+        duration: 'Immersive',
+        level: 'All Levels',
+        seats: 'Available',
+        description: 'Master English and Arabic for professional and academic success in the UAE.',
+        curriculum: ['IELTS Preparation', 'OET for Healthcare', 'Spoken English', 'Spoken Arabic']
+    },
     'finance-accounting': {
         id: 'finance-accounting',
         title: 'Finance & Accounting',
@@ -510,11 +520,11 @@ export const coursesData: { [key: string]: Course } = {
         curriculum: ['SEO Optimization', 'Google Ads', 'Email Marketing', 'Analytics & Reporting']
     },
 
-    // 8. Language
+    // 8. Language Courses
     'ielts': {
         id: 'ielts',
         title: 'IELTS',
-        category: 'Language',
+        category: 'Language Courses',
         duration: '6 Weeks',
         level: 'Beginner to Advanced',
         seats: '30 Remaining',
@@ -525,17 +535,28 @@ export const coursesData: { [key: string]: Course } = {
     'oet': {
         id: 'oet',
         title: 'OET',
-        category: 'Language',
+        category: 'Language Courses',
         duration: '8 Weeks',
         level: 'Professional',
         seats: '30 Remaining',
         description: 'Specific English training for Healthcare professionals (Doctors/Nurses).',
         curriculum: ['Medical Vocabulary', 'Patient Consultations', 'Letter Writing', 'Professional Rapport']
     },
+    'det': {
+        id: 'det',
+        title: 'DET (DUOLINGO ENGLISH TEST)',
+        category: 'Language Courses',
+        duration: '6 Weeks',
+        level: 'Beginner to Advanced',
+        seats: '30 Remaining',
+        description: 'World-renowned English proficiency for study and migration.',
+        curriculum: ['Academic Reading', 'General Writing', 'Mock Tests', 'Speaking Interview Prep'],
+        popular: true
+    },
     'spoken-english': {
         id: 'spoken-english',
         title: 'Spoken English',
-        category: 'Language',
+        category: 'Language Courses',
         duration: '8 Weeks',
         level: 'Beginner',
         seats: '40 Remaining',
@@ -545,13 +566,34 @@ export const coursesData: { [key: string]: Course } = {
     'spoken-arabic': {
         id: 'spoken-arabic',
         title: 'Spoken Arabic',
-        category: 'Language',
+        category: 'Language Courses',
         duration: '12 Weeks',
         level: 'Beginner',
         seats: '30 Remaining',
         description: 'Basic to intermediate conversational Arabic for work and life in UAE.',
         curriculum: ['Daily Greetings', 'Local Phrases', 'Business Arabic', 'Arabic Culture Intro']
     },
+    'spoken-spanish': {
+        id: 'spoken-spanish',
+        title: 'Spoken Spanish',
+        category: 'Language Courses',
+        duration: '8 Weeks',
+        level: 'Beginner',
+        seats: '40 Remaining',
+        description: 'Focus on fluency, pronunciation, and confident conversation.',
+        curriculum: ['Phonetics', 'Common Idioms', 'Group Discussions', 'Phone Etiquette']
+    },
+    'spoken-french': {
+        id: 'spoken-french',
+        title: 'Spoken French',
+        category: 'Language Courses',
+        duration: '8 Weeks',
+        level: 'Beginner',
+        seats: '40 Remaining',
+        description: 'Focus on fluency, pronunciation, and confident conversation.',
+        curriculum: ['Phonetics', 'Common Idioms', 'Group Discussions', 'Phone Etiquette']
+    },
+
 
     // 3. Soft Skills (Moved to end for consistency)
     'change-management': { id: 'change-management', title: 'Change Management', category: 'Soft Skills', duration: '2 Weeks', level: 'Corporate', seats: 'Open', description: 'Strategies for leading organizations through transition.', curriculum: ['Stakeholder Mapping', 'ADKAR Model', 'Resistance Management'] },

@@ -10,8 +10,19 @@ export default function Navbar() {
     const [isOpen, setIsOpen] = useState(false)
     const [scrolled, setScrolled] = useState(false)
     const [mobileDropdownOpen, setMobileDropdownOpen] = useState(false)
+    const [currentLang, setCurrentLang] = useState("EN")
     const pathname = usePathname()
     const { courses } = useCourses() // Fetch courses directly
+
+    const handleLanguageChange = (lang: string) => {
+        setCurrentLang(lang)
+        const googleDropdown = document.querySelector(".goog-te-combo") as HTMLSelectElement
+        if (googleDropdown) {
+            googleDropdown.value = lang === 'EN' ? 'en' : 'ar'
+            // Add bubbles: true to ensure Google's listener intercepts the event
+            googleDropdown.dispatchEvent(new Event("change", { bubbles: true }))
+        }
+    }
 
     const navLinks = [
         { name: "Home", path: "/" },
@@ -31,8 +42,7 @@ export default function Navbar() {
 
     const isActive = (path: string) => pathname === path
 
-    // Define the specific signature categories for the navigation with requested priority order
-    const priorityIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting', 'network-it']
+    const priorityIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting', 'network-it', 'language-courses']
     const navCourses = priorityIds
         .map(id => courses.find(c => c.id === id))
         .filter((c): c is NonNullable<typeof c> => !!c)
@@ -101,8 +111,23 @@ export default function Navbar() {
                     })}
                 </div>
 
-                {/* Enquire Now Button */}
-                <div className="hidden md:block">
+                {/* Language Toggle & Enquire Now */}
+                <div className="hidden md:flex items-center gap-4">
+                    <div className="flex bg-[#2d3f55]/50 border border-white/10 rounded-full p-1 backdrop-blur-md relative z-50">
+                        <button
+                            onClick={() => handleLanguageChange('EN')}
+                            className={`px-3 py-1.5 rounded-full text-[11px] font-black pointer-events-auto tracking-widest transition-colors ${currentLang === 'EN' ? 'bg-blue-500 text-white' : 'text-slate-300 hover:text-white'}`}
+                        >
+                            EN
+                        </button>
+                        <button
+                            onClick={() => handleLanguageChange('AR')}
+                            className={`px-3 py-1.5 rounded-full text-[11px] font-black pointer-events-auto tracking-widest transition-colors ${currentLang === 'AR' ? 'bg-blue-500 text-white' : 'text-slate-300 hover:text-white'}`}
+                        >
+                            AR
+                        </button>
+                    </div>
+
                     <Link
                         href="/contact"
                         className="inline-flex items-center justify-center px-7 py-3 rounded-full font-bold text-white text-[13px] tracking-widest bg-[#2d3f55] hover:bg-[#374e6a] border border-white/10 transition-all duration-300"
@@ -174,6 +199,22 @@ export default function Navbar() {
                             )}
                         </div>
                     ))}
+
+                    <div className="w-full flex justify-center gap-4 py-4 border-y border-white/10 mt-2 z-50 relative pointer-events-auto">
+                        <button
+                            onClick={() => handleLanguageChange('EN')}
+                            className={`flex-1 py-3 rounded-xl text-[12px] font-black pointer-events-auto tracking-widest transition-colors ${currentLang === 'EN' ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-300'}`}
+                        >
+                            ENG
+                        </button>
+                        <button
+                            onClick={() => handleLanguageChange('AR')}
+                            className={`flex-1 py-3 rounded-xl text-[12px] font-black pointer-events-auto tracking-widest transition-colors ${currentLang === 'AR' ? 'bg-blue-500 text-white' : 'bg-white/5 text-slate-300'}`}
+                        >
+                            ARB
+                        </button>
+                    </div>
+
                     <Link
                         href="/contact"
                         className="mt-6 w-full text-center py-4 rounded-xl font-bold text-white bg-blue-600 hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-900/40"

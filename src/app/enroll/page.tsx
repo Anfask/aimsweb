@@ -8,22 +8,29 @@ import { Send, MapPin, Phone, Mail, ArrowRight, AlertCircle, BookOpen, Graduatio
 import FAQ from "@/components/FAQ"
 import GoogleMap from "@/components/GoogleMap"
 import { coursesData } from "@/data/courses"
+import _ from "lodash"
+import { useForm } from "react-hook-form"
+
+type FormValues = {
+    name: string;
+    contact: string;
+    email: string;
+    course: string;
+    location: string;
+};
 
 export default function Enroll() {
     const heroRef = useRef<HTMLElement>(null)
-    const formRef = useRef<HTMLDivElement>(null)
-    const [formData, setFormData] = useState({
-        name: "",
-        contact: "",
-        email: "",
-        course: "",
-        location: ""
+    const formRef = useRef<HTMLFormElement>(null)
+    
+    const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormValues>({
+        defaultValues: { name: "", contact: "", email: "", course: "", location: "" }
     })
-    const [errors, setErrors] = useState<Record<string, string>>({})
+
     const [isSubmitted, setIsSubmitted] = useState(false)
 
     // Get list of courses for the dropdown
-    const courseList = Object.values(coursesData).map(c => c.title).sort()
+    const courseList = _.sortBy(_.map(coursesData, 'title'))
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -40,37 +47,23 @@ export default function Enroll() {
         return () => ctx.revert()
     }, [])
 
-    const validateForm = () => {
-        const newErrors: Record<string, string> = {}
+    const onSubmit = async (data: FormValues) => {
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
 
-        if (!formData.name.trim()) newErrors.name = "Name is required"
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!formData.email.trim()) {
-            newErrors.email = "Email is required"
-        } else if (!emailRegex.test(formData.email)) {
-            newErrors.email = "Invalid email format"
-        }
-
-        const phoneRegex = /^[0-9+\s-]{7,15}$/
-        if (!formData.contact.trim()) {
-            newErrors.contact = "Contact number is required"
-        } else if (!phoneRegex.test(formData.contact)) {
-            newErrors.contact = "Invalid contact number"
-        }
-
-        if (!formData.course) newErrors.course = "Please select a course"
-        if (!formData.location.trim()) newErrors.location = "Location is required"
-
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        if (validateForm()) {
-            setIsSubmitted(true)
-            setFormData({ name: "", contact: "", email: "", course: "", location: "" })
+            if (response.ok) {
+                setIsSubmitted(true);
+                reset();
+            } else {
+                alert("Failed to submit enrollment. Please try again later.");
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+            alert("An error occurred. Please check your connection.");
         }
     }
 
@@ -157,7 +150,7 @@ export default function Enroll() {
                                     </button>
                                 </div>
                             ) : (
-                                <div ref={formRef} className="reveal-item w-full max-w-[550px] bg-slate-900/60 backdrop-blur-3xl px-10 py-12 sm:px-14 sm:py-16 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-10 overflow-hidden relative group">
+                                <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="reveal-item w-full max-w-[550px] bg-slate-900/60 backdrop-blur-3xl px-10 py-12 sm:px-14 sm:py-16 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-10 overflow-hidden relative group">
                                     <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
                                     <div className="space-y-6 relative z-10 font-figtree">
@@ -167,22 +160,23 @@ export default function Enroll() {
                                                 <input
                                                     type="text"
                                                     placeholder="John Doe"
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                    {...register("name", { required: "Name is required" })}
                                                     className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.name ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white placeholder:text-white/10`}
                                                 />
-                                                {errors.name && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.name}</p>}
+                                                {errors.name && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.name.message}</p>}
                                             </div>
                                             <div className="space-y-2">
                                                 <label className="text-[14px] font-medium text-white ml-1">Contact Number</label>
                                                 <input
                                                     type="text"
                                                     placeholder="+971 -- --- ----"
-                                                    value={formData.contact}
-                                                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                                                    {...register("contact", { 
+                                                        required: "Contact number is required",
+                                                        pattern: { value: /^[0-9+\s-]{7,15}$/, message: "Invalid contact number" }
+                                                    })}
                                                     className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.contact ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white placeholder:text-white/10`}
                                                 />
-                                                {errors.contact && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.contact}</p>}
+                                                {errors.contact && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.contact.message}</p>}
                                             </div>
                                         </div>
 
@@ -191,18 +185,19 @@ export default function Enroll() {
                                             <input
                                                 type="email"
                                                 placeholder="john@example.com"
-                                                value={formData.email}
-                                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                {...register("email", { 
+                                                    required: "Email is required",
+                                                    pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" }
+                                                })}
                                                 className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.email ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white placeholder:text-white/10`}
                                             />
-                                            {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.email}</p>}
+                                            {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.email.message}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <label className="text-[14px] font-medium text-white ml-1">Select Program</label>
                                             <select
-                                                value={formData.course}
-                                                onChange={(e) => setFormData({ ...formData, course: e.target.value })}
+                                                {...register("course", { required: "Please select a course" })}
                                                 className={`w-full px-5 py-4 rounded-lg bg-slate-900 border ${errors.course ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 outline-none transition-all text-white/90 appearance-none`}
                                             >
                                                 <option value="" disabled className="bg-slate-900">Choose a course...</option>
@@ -210,7 +205,7 @@ export default function Enroll() {
                                                     <option key={i} value={course} className="bg-slate-900">{course}</option>
                                                 ))}
                                             </select>
-                                            {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.course}</p>}
+                                            {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.course.message}</p>}
                                         </div>
 
                                         <div className="space-y-2">
@@ -218,27 +213,36 @@ export default function Enroll() {
                                             <input
                                                 type="text"
                                                 placeholder="e.g. Abu Dhabi, UAE"
-                                                value={formData.location}
-                                                onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+                                                {...register("location", { required: "Location is required" })}
                                                 className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.location ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white placeholder:text-white/10`}
                                             />
-                                            {errors.location && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.location}</p>}
+                                            {errors.location && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.location.message}</p>}
                                         </div>
                                     </div>
 
                                     <div className="space-y-8 pt-4 text-center relative z-10">
                                         <button
-                                            onClick={handleSubmit}
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3"
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white py-6 rounded-xl font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3"
                                         >
-                                            Complete Enrollment
-                                            <ArrowRight size={20} />
+                                            {isSubmitting ? (
+                                                <>
+                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                    Processing...
+                                                </>
+                                            ) : (
+                                                <>
+                                                    Complete Enrollment
+                                                    <ArrowRight size={20} />
+                                                </>
+                                            )}
                                         </button>
                                         <p className="text-[13px] font-medium text-white/40 leading-relaxed font-figtree">
                                             By clicking submit, you agree to our terms of admission and professional training guidelines.
                                         </p>
                                     </div>
-                                </div>
+                                </form>
                             )}
                         </div>
                     </div>

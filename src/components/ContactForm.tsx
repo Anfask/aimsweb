@@ -2,37 +2,48 @@
 
 import { useState, useRef, useEffect } from "react"
 import { AlertCircle, Check, ChevronDown, Search } from "lucide-react"
+import { useForm } from "react-hook-form"
+import _ from "lodash"
 import { coursesData } from "@/data/courses"
 
 interface ContactFormProps {
   defaultCourse?: string;
 }
 
+type FormValues = {
+  name: string;
+  contact: string;
+  email: string;
+  course: string;
+};
+
 export default function ContactForm({ defaultCourse }: ContactFormProps) {
-  const [formData, setFormData] = useState({
-    name: "",
-    contact: "",
-    email: "",
-    course: defaultCourse || ""
+  const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting }, reset } = useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      contact: "",
+      email: "",
+      course: defaultCourse || ""
+    }
   })
-  const [errors, setErrors] = useState<Record<string, string>>({})
+
   const [isSubmitted, setIsSubmitted] = useState(false)
   const [isDropdownOpen, setIsDropdownOpen] = useState(false)
-  const [searchTerm, setSearchTerm] = useState("")
+  const [searchTerm, setSearchTerm] = useState(defaultCourse || "")
   const dropdownRef = useRef<HTMLDivElement>(null)
 
-  // Group courses by category, applying search filter
-  const groupedCourses = Object.values(coursesData).reduce((acc, course) => {
-    if (course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-        course.category.toLowerCase().includes(searchTerm.toLowerCase())) {
-      if (!acc[course.category]) acc[course.category] = []
-      // Prevent duplicates if multiple course variations exist
-      if (!acc[course.category].includes(course.title)) {
-          acc[course.category].push(course.title)
-      }
-    }
-    return acc
-  }, {} as Record<string, string[]>)
+  const watchedCourse = watch('course')
+
+  // Group courses by category, applying search filter using lodash
+  const filteredCourses = _.filter(Object.values(coursesData), (course) => 
+    course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    course.category.toLowerCase().includes(searchTerm.toLowerCase())
+  )
+
+  const groupedCourses = _.mapValues(
+    _.groupBy(filteredCourses, 'category'),
+    (courses) => _.uniq(_.map(courses, 'title'))
+  )
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -44,32 +55,24 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
     return () => document.removeEventListener("mousedown", handleClickOutside)
   }, [])
 
-  const validateForm = () => {
-    const newErrors: Record<string, string> = {}
-    if (!formData.name.trim()) newErrors.name = "Name is required"
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-    if (!formData.email.trim()) {
-      newErrors.email = "Email is required"
-    } else if (!emailRegex.test(formData.email)) {
-      newErrors.email = "Invalid email format"
-    }
-    const phoneRegex = /^[0-9+\s-]{7,15}$/
-    if (!formData.contact.trim()) {
-      newErrors.contact = "Contact number is required"
-    } else if (!phoneRegex.test(formData.contact)) {
-      newErrors.contact = "Invalid contact number"
-    }
-    if (!formData.course) newErrors.course = "Please select a course"
-    
-    setErrors(newErrors)
-    return Object.keys(newErrors).length === 0
-  }
+  const onSubmit = async (data: FormValues) => {
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data),
+      });
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    if (validateForm()) {
-      setIsSubmitted(true)
-      setFormData({ name: "", contact: "", email: "", course: "" })
+      if (response.ok) {
+        setIsSubmitted(true);
+        reset();
+        setSearchTerm(defaultCourse || "");
+      } else {
+        alert("Failed to send message. Please try again later.");
+      }
+    } catch (error) {
+      console.error("Submission error:", error);
+      alert("An error occurred. Please check your connection.");
     }
   }
 
@@ -106,28 +109,29 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
               </button>
             </div>
           ) : (
-            <div className="w-full bg-white/10 backdrop-blur-xl px-8 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-8 relative group">
+            <form onSubmit={handleSubmit(onSubmit)} className="w-full bg-white/10 backdrop-blur-xl px-8 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-8 relative group">
               <div className="space-y-6 relative z-50 transition-all">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   <div className="space-y-2">
                     <label className="text-[14px] font-medium text-white ml-1">Full Name</label>
                     <input
                       type="text"
-                      value={formData.name}
-                      onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                      {...register("name", { required: "Name is required" })}
                       className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.name ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal`}
                     />
-                    {errors.name && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.name}</p>}
+                    {errors.name && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.name.message}</p>}
                   </div>
                   <div className="space-y-2">
                     <label className="text-[14px] font-medium text-white ml-1">Contact Number</label>
                     <input
                       type="text"
-                      value={formData.contact}
-                      onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                      {...register("contact", { 
+                        required: "Contact number is required",
+                        pattern: { value: /^[0-9+\s-]{7,15}$/, message: "Invalid contact number" }
+                      })}
                       className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.contact ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal`}
                     />
-                    {errors.contact && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.contact}</p>}
+                    {errors.contact && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.contact.message}</p>}
                   </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -135,11 +139,13 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
                     <label className="text-[14px] font-medium text-white ml-1">Email Address</label>
                     <input
                       type="email"
-                      value={formData.email}
-                      onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      {...register("email", { 
+                        required: "Email is required",
+                        pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" }
+                      })}
                       className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.email ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal`}
                     />
-                    {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.email}</p>}
+                    {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.email.message}</p>}
                   </div>
                   <div className="space-y-2 relative" ref={dropdownRef}>
                     <label className="text-[14px] font-medium text-white ml-1">Course Interested</label>
@@ -147,12 +153,13 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
                       <input
                         type="text"
                         placeholder="Type to search or enter course..."
-                        value={formData.course}
+                        {...register("course", { required: "Please select a course" })}
                         readOnly={!!defaultCourse}
                         onFocus={() => !defaultCourse && setIsDropdownOpen(true)}
                         onChange={(e) => {
-                          setFormData({ ...formData, course: e.target.value })
-                          setSearchTerm(e.target.value)
+                          const val = e.target.value;
+                          setSearchTerm(val)
+                          setValue('course', val, { shouldValidate: true })
                           setIsDropdownOpen(true)
                         }}
                         className={`w-full px-5 py-4 pr-12 rounded-lg bg-white/[0.03] border ${errors.course ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal ${defaultCourse ? 'opacity-70 cursor-not-allowed' : 'cursor-text'}`}
@@ -169,7 +176,17 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
                     {isDropdownOpen && !defaultCourse && (
                       <div className="absolute top-[calc(100%+8px)] left-0 w-full z-[100] bg-[#0f172a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl max-h-[280px] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/10 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
                         {Object.keys(groupedCourses).length > 0 ? (
-                          Object.entries(groupedCourses).map(([category, titles]) => (
+                          _.sortBy(Object.entries(groupedCourses), ([catA]) => {
+                            const priority = [
+                              "Engineering and CAD",
+                              "Office Administration",
+                              "Graphic Design and Animation",
+                              "Finance & Accounting",
+                              "IT & Networking"
+                            ];
+                            const idx = priority.indexOf(catA);
+                            return idx !== -1 ? idx : priority.length;
+                          }).map(([category, titles]) => (
                             <div key={category} className="mb-2 last:mb-0">
                               <div className="px-3 py-1.5 text-[10px] font-black uppercase tracking-widest text-[#c8915a] bg-[#794d00]/10 rounded-lg mb-1 sticky top-0 z-10 backdrop-blur-md">
                                 {category}
@@ -180,14 +197,14 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
                                     key={i}
                                     type="button"
                                     onClick={() => {
-                                      setFormData({ ...formData, course: title })
+                                      setValue('course', title, { shouldValidate: true })
                                       setSearchTerm(title)
                                       setIsDropdownOpen(false)
                                     }}
                                     className="w-full text-left px-4 py-2.5 rounded-xl text-[13px] text-white/80 hover:text-white hover:bg-white/10 transition-all font-medium flex items-center justify-between group"
                                   >
                                     {title}
-                                    <Check size={14} className={`text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity ${formData.course === title ? 'opacity-100' : ''}`} />
+                                    <Check size={14} className={`text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity ${watchedCourse === title ? 'opacity-100' : ''}`} />
                                   </button>
                                 ))}
                               </div>
@@ -201,23 +218,29 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
                         )}
                       </div>
                     )}
-                    {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1 mt-1"><AlertCircle size={10} /> {errors.course}</p>}
+                    {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1 mt-1"><AlertCircle size={10} /> {errors.course.message}</p>}
                   </div>
                 </div>
               </div>
 
               <div className="space-y-6 pt-2 text-center relative z-10">
                 <button
-                  onClick={handleSubmit}
-                  className="w-full bg-blue-500 hover:bg-blue-600 text-white py-5 rounded-xl font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-500/30"
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed text-white py-5 rounded-xl font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
                 >
-                  Submit Now
+                  {isSubmitting ? (
+                    <>
+                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      Sending...
+                    </>
+                  ) : "Submit Now"}
                 </button>
                 <p className="text-[13px] font-normal text-white opacity-60 leading-relaxed font-figtree">
                   From zero to job-ready. Apply in 60 seconds.
                 </p>
               </div>
-            </div>
+            </form>
           )}
         </div>
 

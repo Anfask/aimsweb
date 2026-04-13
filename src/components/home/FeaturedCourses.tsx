@@ -4,7 +4,7 @@ import { useLayoutEffect, useRef } from "react"
 import Link from "next/link"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowRight, Calculator, Briefcase, Compass, Palette, BookOpen, Wind } from "lucide-react"
+import { ArrowRight, Calculator, Briefcase, Compass, Palette, BookOpen, Wind, MessageCircle } from "lucide-react"
 import { useCourses } from "@/hooks/useCourse"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -45,6 +45,7 @@ export default function FeaturedCourses() {
             case 'Engineering and CAD': return <Compass size={size} />
             case 'Graphic Design and Animation': return <Palette size={size} />
             case 'IT & Networking': return <Wind size={size} aria-label="Network" />
+            case 'Language Courses': return <BookOpen size={size} />
             default: return <BookOpen size={size} />
         }
     }
@@ -62,7 +63,7 @@ export default function FeaturedCourses() {
     }
 
     // Select the 5 main signature category overviews to feature with specific priority
-    const featuredIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting', 'network-it']
+    const featuredIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting', 'network-it', 'language-courses']
     const featuredCourses = featuredIds
         .map(id => courses.find(c => c.id === id))
         .filter((c): c is NonNullable<typeof c> => !!c)

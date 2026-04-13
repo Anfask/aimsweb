@@ -43,10 +43,10 @@ export default function Hero() {
                                 Enroll Now
                             </Link>
 
-                            <button className="group flex items-center gap-3 text-[#794d00] font-bold text-[17px] hover:opacity-80 transition-opacity">
+                            <Link href="/about" className="group flex items-center gap-3 text-[#794d00] font-bold text-[17px] hover:opacity-80 transition-opacity">
                                 <PlayCircle size={32} strokeWidth={2} className="fill-[#794d00]/10 group-hover:scale-110 transition-transform" />
                                 Learn More
-                            </button>
+                            </Link>
                         </div>
 
                         {/* Social Proof / Google Reviews */}
@@ -86,8 +86,8 @@ export default function Hero() {
                         {/* Main Composite Image */}
                         <div className="relative w-full max-w-[600px] xl:max-w-[700px] z-0 mt-10 lg:mt-0">
                             <img
-                                src="/images/brown-hero-student.png"
-                                alt="Student growing knowledge"
+                                src="/images/emirati-male-student.png"
+                                alt="Emirati male student growing knowledge"
                                 className="w-full h-auto object-contain mix-blend-darken"
                             />
 
@@ -119,7 +119,7 @@ export default function Hero() {
                                 </div>
                                 <div className="flex flex-col justify-center">
                                     <span className="font-bold text-[17px] text-slate-900 leading-[1.1]">200+</span>
-                                    <span className="text-[14px] font-semibold text-slate-500">Online & Offline Courses</span>
+                                    <span className="text-[14px] font-semibold text-slate-500">Online and in-person learning</span>
                                 </div>
                             </div>
 

@@ -9,9 +9,11 @@ import {
 } from "lucide-react"
 import { coursesData } from "@/data/courses"
 import Link from "next/link"
+import _ from "lodash"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useEffect, useRef, useState } from "react"
+import { useForm } from "react-hook-form"
 import WhyChooseAIMS from "@/components/WhyChooseAIMS"
 import ContactForm from "@/components/ContactForm"
 import FAQ from "@/components/FAQ"
@@ -22,25 +24,41 @@ gsap.registerPlugin(ScrollTrigger)
    Exact clone of ContactForm – glassmorphic style
    Used in Hero (enroll) and Curriculum (brochure)
 ───────────────────────────────────────── */
+
+type FormValues = {
+    name: string;
+    contact: string;
+    email: string;
+    course: string;
+};
+
 function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { submitLabel?: string, defaultCourse?: string }) {
-    const [formData, setFormData] = useState({ name: "", contact: "", email: "", course: defaultCourse || "" })
-    const [errors, setErrors] = useState<Record<string, string>>({})
+    const { register, handleSubmit, setValue, watch, formState: { errors, isSubmitting }, reset } = useForm<FormValues>({
+        defaultValues: {
+            name: "",
+            contact: "",
+            email: "",
+            course: defaultCourse || ""
+        }
+    })
+
     const [isSubmitted, setIsSubmitted] = useState(false)
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const [searchTerm, setSearchTerm] = useState(defaultCourse || "")
     const dropdownRef = useRef<HTMLDivElement>(null)
 
-    // Group courses by category, applying search filter
-    const groupedCourses = Object.values(coursesData).reduce((acc, course) => {
-        if (course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            course.category.toLowerCase().includes(searchTerm.toLowerCase())) {
-            if (!acc[course.category]) acc[course.category] = []
-            if (!acc[course.category].includes(course.title)) {
-                acc[course.category].push(course.title)
-            }
-        }
-        return acc
-    }, {} as Record<string, string[]>)
+    const watchedCourse = watch('course')
+
+    // Group courses by category, applying search filter using lodash
+    const filteredCourses = _.filter(Object.values(coursesData), (course) => 
+        course.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
+        course.category.toLowerCase().includes(searchTerm.toLowerCase())
+    )
+
+    const groupedCourses = _.mapValues(
+        _.groupBy(filteredCourses, 'category'),
+        (courses) => _.uniq(_.map(courses, 'title'))
+    )
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -52,23 +70,24 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
         return () => document.removeEventListener("mousedown", handleClickOutside)
     }, [])
 
-    const validate = () => {
-        const e: Record<string, string> = {}
-        if (!formData.name.trim()) e.name = "Name is required"
-        if (!formData.email.trim()) e.email = "Email is required"
-        else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) e.email = "Invalid email format"
-        if (!formData.contact.trim()) e.contact = "Contact number is required"
-        else if (!/^[0-9+\s-]{7,15}$/.test(formData.contact)) e.contact = "Invalid contact number"
-        if (!formData.course) e.course = "Please select a course"
-        setErrors(e)
-        return Object.keys(e).length === 0
-    }
+    const onSubmit = async (data: FormValues) => {
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
 
-    const handleSubmit = (ev: React.FormEvent) => {
-        ev.preventDefault()
-        if (validate()) {
-            setIsSubmitted(true)
-            setFormData({ name: "", contact: "", email: "", course: defaultCourse || "" })
+            if (response.ok) {
+                setIsSubmitted(true);
+                reset();
+                setSearchTerm(defaultCourse || "");
+            } else {
+                alert("Failed to send message. Please try again later.");
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+            alert("An error occurred. Please check your connection.");
         }
     }
 
@@ -94,32 +113,33 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
         )
     }
 
-    const inputCls = (field: string) =>
+    const inputCls = (field: keyof FormValues) =>
         `w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors[field] ? "border-red-500/50" : "border-white/10"} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal`
 
     return (
-        <div className="w-full bg-white/10 backdrop-blur-xl px-8 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-8 relative">
+        <form onSubmit={handleSubmit(onSubmit)} className="w-full bg-white/10 backdrop-blur-xl px-8 py-10 sm:px-12 sm:py-14 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-8 relative">
             <div className="space-y-6 relative z-50">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                     <div className="space-y-2">
                         <label className="text-[14px] font-medium text-white ml-1">Full Name</label>
                         <input
                             type="text"
-                            value={formData.name}
-                            onChange={e => setFormData({ ...formData, name: e.target.value })}
+                            {...register("name", { required: "Name is required" })}
                             className={inputCls("name")}
                         />
-                        {errors.name && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.name}</p>}
+                        {errors.name && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.name.message}</p>}
                     </div>
                     <div className="space-y-2">
                         <label className="text-[14px] font-medium text-white ml-1">Contact Number</label>
                         <input
                             type="text"
-                            value={formData.contact}
-                            onChange={e => setFormData({ ...formData, contact: e.target.value })}
+                            {...register("contact", { 
+                                required: "Contact number is required",
+                                pattern: { value: /^[0-9+\s-]{7,15}$/, message: "Invalid contact number" }
+                            })}
                             className={inputCls("contact")}
                         />
-                        {errors.contact && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.contact}</p>}
+                        {errors.contact && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.contact.message}</p>}
                     </div>
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -127,11 +147,13 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
                         <label className="text-[14px] font-medium text-white ml-1">Email Address</label>
                         <input
                             type="email"
-                            value={formData.email}
-                            onChange={e => setFormData({ ...formData, email: e.target.value })}
+                            {...register("email", { 
+                                required: "Email is required",
+                                pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" }
+                            })}
                             className={inputCls("email")}
                         />
-                        {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.email}</p>}
+                        {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} />{errors.email.message}</p>}
                     </div>
                     <div className="space-y-2 relative" ref={dropdownRef}>
                         <label className="text-[14px] font-medium text-white ml-1">Course Interested</label>
@@ -139,12 +161,13 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
                             <input
                                 type="text"
                                 placeholder="Type to search..."
-                                value={formData.course}
+                                {...register("course", { required: "Please select a course" })}
                                 readOnly={!!defaultCourse}
                                 onFocus={() => !defaultCourse && setIsDropdownOpen(true)}
                                 onChange={(e) => {
-                                    setFormData({ ...formData, course: e.target.value })
-                                    setSearchTerm(e.target.value)
+                                    const val = e.target.value;
+                                    setSearchTerm(val)
+                                    setValue('course', val, { shouldValidate: true })
                                     setIsDropdownOpen(true)
                                 }}
                                 className={`w-full px-5 py-4 ${!defaultCourse ? 'pr-12' : ''} rounded-lg bg-white/[0.03] border ${errors.course ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal ${defaultCourse ? 'opacity-80 cursor-not-allowed' : 'cursor-text'}`}
@@ -172,14 +195,14 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
                                                         key={i}
                                                         type="button"
                                                         onClick={() => {
-                                                            setFormData({ ...formData, course: title })
+                                                            setValue('course', title, { shouldValidate: true })
                                                             setSearchTerm(title)
                                                             setIsDropdownOpen(false)
                                                         }}
                                                         className="w-full text-left px-4 py-2.5 rounded-xl text-[13px] text-white/80 hover:text-white hover:bg-white/10 transition-all font-medium flex items-center justify-between group"
                                                     >
                                                         {title}
-                                                        <Check size={14} className={`text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity ${formData.course === title ? 'opacity-100' : ''}`} />
+                                                        <Check size={14} className={`text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity ${watchedCourse === title ? 'opacity-100' : ''}`} />
                                                     </button>
                                                 ))}
                                             </div>
@@ -193,23 +216,29 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
                                 )}
                             </div>
                         )}
-                        {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1 mt-1"><AlertCircle size={10} />{errors.course}</p>}
+                        {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1 mt-1"><AlertCircle size={10} />{errors.course.message}</p>}
                     </div>
                 </div>
             </div>
 
             <div className="space-y-4 pt-2 text-center relative z-10">
                 <button
-                    onClick={handleSubmit}
-                    className="w-full bg-blue-500 hover:bg-blue-600 text-white py-5 rounded-xl font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-500/30"
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="w-full bg-blue-500 hover:bg-blue-600 disabled:bg-blue-300 disabled:cursor-not-allowed text-white py-5 rounded-xl font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-500/30 flex items-center justify-center gap-2"
                 >
-                    {submitLabel}
+                    {isSubmitting ? (
+                        <>
+                            <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                            Sending...
+                        </>
+                    ) : submitLabel}
                 </button>
                 <p className="text-[13px] font-normal text-white opacity-60 leading-relaxed">
                     From zero to job-ready. Apply in 60 seconds.
                 </p>
             </div>
-        </div>
+        </form>
     )
 }
 
@@ -261,12 +290,16 @@ export default function CourseDetail() {
     const { courses: allCourses } = useCourses()
     const containerRef = useRef<HTMLDivElement>(null)
 
-    let relatedCourses = allCourses
-        .filter(c => c.category === course?.category && c.id !== course?.id && !SIGNATURE_COURSE_IDS.includes(c.id))
-        .slice(0, 3)
+    let relatedCourses = _.take(
+        _.reject(allCourses, c => c.id === course?.id || SIGNATURE_COURSE_IDS.includes(c.id) || c.category !== course?.category),
+        3
+    )
 
     if (relatedCourses.length === 0 && course && allCourses.length > 0) {
-        relatedCourses = allCourses.filter(c => c.id !== course.id && !SIGNATURE_COURSE_IDS.includes(c.id)).slice(0, 3)
+        relatedCourses = _.take(
+            _.reject(allCourses, c => c.id === course.id || SIGNATURE_COURSE_IDS.includes(c.id)),
+            3
+        )
     }
 
     // Category → generated course image mapping

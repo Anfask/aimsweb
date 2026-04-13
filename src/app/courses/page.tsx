@@ -4,6 +4,7 @@ import { useState, useEffect, useRef, useMemo, Suspense } from "react"
 import { useSearchParams } from "next/navigation"
 import Link from "next/link"
 import { Search, BookOpen, Clock, ChevronRight, TrendingUp, ArrowRight, Star, X } from "lucide-react"
+import _ from "lodash"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useCourses } from "@/hooks/useCourse"
@@ -13,22 +14,23 @@ import FAQ from "@/components/FAQ"
 gsap.registerPlugin(ScrollTrigger)
 
 const CATEGORY_ORDER = [
-    "Finance & Accounting",
-    "Office Administration",
     "Engineering and CAD",
+    "Office Administration",
     "Graphic Design and Animation",
-    "Project Management",
+    "Finance & Accounting",
     "IT & Networking",
+    "Language Courses",
+    "Project Management",
     "Soft Skills",
-    "Language",
 ]
 
 const SIGNATURE_COURSE_IDS = [
-    'finance-accounting',
-    'office-administration',
     'engineering-cad',
+    'office-administration',
     'graphic-design-animation',
-    'network-it'
+    'finance-accounting',
+    'network-it',
+    'language-courses'
 ]
 
 function CoursesContent() {
@@ -39,24 +41,19 @@ function CoursesContent() {
     const stickyBarRef = useRef<HTMLDivElement>(null)
     const searchParams = useSearchParams()
 
-    // Filter
-    const filteredCourses = useMemo(() => coursesData.filter(course =>
+    // Filter using lodash
+    const filteredCourses = useMemo(() => _.filter(coursesData, course =>
         course.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
         course.category.toLowerCase().includes(searchTerm.toLowerCase())
     ), [coursesData, searchTerm])
 
-    // Grouped & ordered - Exclude signature cards from the list
-    const groupedCourses = useMemo(() => {
-        const groups: Record<string, typeof coursesData> = {}
-        filteredCourses.forEach(course => {
-            // Fix: skip signature courses to avoid duplication of the category title as a card
-            if (SIGNATURE_COURSE_IDS.includes(course.id)) return
-            
-            if (!groups[course.category]) groups[course.category] = []
-            groups[course.category].push(course)
-        })
-        return groups
-    }, [filteredCourses])
+    // Grouped & ordered - Exclude signature cards from the list using lodash reject/groupBy
+    const groupedCourses = useMemo(() => 
+        _.groupBy(
+            _.reject(filteredCourses, course => SIGNATURE_COURSE_IDS.includes(course.id)), 
+            'category'
+        ), 
+    [filteredCourses])
 
     const categories = useMemo(() =>
         CATEGORY_ORDER.filter(cat => groupedCourses[cat]?.length > 0),

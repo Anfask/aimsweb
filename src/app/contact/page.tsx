@@ -6,18 +6,47 @@ import Image from "next/image"
 import { Send, MapPin, Phone, Mail, ArrowRight, AlertCircle } from "lucide-react"
 import FAQ from "@/components/FAQ"
 import GoogleMap from "@/components/GoogleMap"
+import { useForm } from "react-hook-form"
+import { coursesData } from "@/data/courses"
+import _ from "lodash"
+
+type FormValues = {
+    name: string;
+    contact: string;
+    email: string;
+    course: string;
+};
 
 export default function Contact() {
     const heroRef = useRef<HTMLElement>(null)
-    const formRef = useRef<HTMLDivElement>(null)
-    const [formData, setFormData] = useState({
-        name: "",
-        contact: "",
-        email: "",
-        course: ""
+    const formRef = useRef<HTMLFormElement>(null)
+
+    const { register, handleSubmit, formState: { errors, isSubmitting }, reset } = useForm<FormValues>({
+        defaultValues: { name: "", contact: "", email: "", course: "" }
     })
-    const [errors, setErrors] = useState<Record<string, string>>({})
+
     const [isSubmitted, setIsSubmitted] = useState(false)
+
+    // Dynamic courses grouping logic
+    const groupedCourses = _.mapValues(
+        _.groupBy(Object.values(coursesData), 'category'),
+        (courses) => _.uniq(_.map(courses, 'title'))
+    )
+
+    const priorityOrder = [
+        "Engineering and CAD",
+        "Office Administration",
+        "Graphic Design and Animation",
+        "Finance & Accounting",
+        "Project Management",
+        "IT & Networking",
+        "Language Courses"
+    ];
+
+    const sortedCategories = _.sortBy(Object.entries(groupedCourses), ([category]) => {
+        const idx = priorityOrder.indexOf(category);
+        return idx !== -1 ? idx : priorityOrder.length;
+    });
 
     useEffect(() => {
         const ctx = gsap.context(() => {
@@ -35,40 +64,23 @@ export default function Contact() {
         return () => ctx.revert()
     }, [])
 
-    const validateForm = () => {
-        const newErrors: Record<string, string> = {}
+    const onSubmit = async (data: FormValues) => {
+        try {
+            const response = await fetch('/api/contact', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data),
+            });
 
-        // Name Validation
-        if (!formData.name.trim()) newErrors.name = "Name is required"
-
-        // Email Validation
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!formData.email.trim()) {
-            newErrors.email = "Email is required"
-        } else if (!emailRegex.test(formData.email)) {
-            newErrors.email = "Invalid email format"
-        }
-
-        // Contact Number Validation (Minimum 7 digits, digits only)
-        const phoneRegex = /^[0-9+\s-]{7,15}$/
-        if (!formData.contact.trim()) {
-            newErrors.contact = "Contact number is required"
-        } else if (!phoneRegex.test(formData.contact)) {
-            newErrors.contact = "Invalid contact number"
-        }
-
-        // Course Validation
-        if (!formData.course) newErrors.course = "Please select a course"
-
-        setErrors(newErrors)
-        return Object.keys(newErrors).length === 0
-    }
-
-    const handleSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
-        if (validateForm()) {
-            setIsSubmitted(true)
-            setFormData({ name: "", contact: "", email: "", course: "" })
+            if (response.ok) {
+                setIsSubmitted(true);
+                reset();
+            } else {
+                alert("Failed to send message. Please try again later.");
+            }
+        } catch (error) {
+            console.error("Submission error:", error);
+            alert("An error occurred. Please check your connection.");
         }
     }
 
@@ -150,7 +162,7 @@ export default function Contact() {
                                 </div>
                             ) : (
                                 // Original Form Card
-                                <div ref={formRef} className="reveal-item w-full max-w-[550px] bg-slate-900/60 backdrop-blur-3xl px-10 py-12 sm:px-14 sm:py-16 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-12 overflow-hidden relative group">
+                                <form ref={formRef} onSubmit={handleSubmit(onSubmit)} className="reveal-item w-full max-w-[550px] bg-slate-900/60 backdrop-blur-3xl px-10 py-12 sm:px-14 sm:py-16 rounded-[2.5rem] border border-white/20 shadow-[0_50px_100px_-20px_rgba(0,0,0,0.8)] space-y-12 overflow-hidden relative group">
                                     {/* Subtle Inner Glow / Hover Effect */}
                                     <div className="absolute inset-0 bg-gradient-to-tr from-blue-500/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
 
@@ -160,21 +172,22 @@ export default function Contact() {
                                                 <label className="text-[14px] font-medium text-white ml-1">Full Name</label>
                                                 <input
                                                     type="text"
-                                                    value={formData.name}
-                                                    onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                                    {...register("name", { required: "Name is required" })}
                                                     className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.name ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal`}
                                                 />
-                                                {errors.name && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.name}</p>}
+                                                {errors.name && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.name.message}</p>}
                                             </div>
                                             <div className="space-y-3">
                                                 <label className="text-[14px] font-medium text-white ml-1">Contact Number</label>
                                                 <input
                                                     type="text"
-                                                    value={formData.contact}
-                                                    onChange={(e) => setFormData({ ...formData, contact: e.target.value })}
+                                                    {...register("contact", {
+                                                        required: "Contact number is required",
+                                                        pattern: { value: /^[0-9+\s-]{7,15}$/, message: "Invalid contact number" }
+                                                    })}
                                                     className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.contact ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal`}
                                                 />
-                                                {errors.contact && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.contact}</p>}
+                                                {errors.contact && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.contact.message}</p>}
                                             </div>
                                         </div>
                                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-8 font-figtree">
@@ -182,91 +195,54 @@ export default function Contact() {
                                                 <label className="text-[14px] font-medium text-white ml-1 font-figtree">Email Address</label>
                                                 <input
                                                     type="email"
-                                                    value={formData.email}
-                                                    onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                                    {...register("email", {
+                                                        required: "Email is required",
+                                                        pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email format" }
+                                                    })}
                                                     className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.email ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal font-figtree`}
                                                 />
-                                                {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.email}</p>}
+                                                {errors.email && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.email.message}</p>}
                                             </div>
                                             <div className="space-y-3">
                                                 <label className="text-[14px] font-medium text-white ml-1 font-figtree">Course Interested</label>
                                                 <select
-                                                    value={formData.course}
-                                                    onChange={(e) => setFormData({ ...formData, course: e.target.value })}
+                                                    {...register("course", { required: "Please select a course" })}
                                                     className={`w-full px-5 py-4 rounded-lg bg-white/[0.03] border ${errors.course ? 'border-red-500/50' : 'border-white/10'} focus:border-blue-500/40 focus:bg-white/[0.05] outline-none transition-all text-white font-normal font-figtree appearance-none cursor-pointer`}
                                                 >
                                                     <option value="" className="bg-[#020617] text-white">Select a Course</option>
-
-                                                    <optgroup label="Finance & Accounting" className="bg-[#020617] text-blue-400 font-bold">
-                                                        <option value="Tally Prime" className="text-white bg-[#020617]">Tally Prime</option>
-                                                        <option value="QuickBooks" className="text-white bg-[#020617]">QuickBooks</option>
-                                                        <option value="SAP FICO" className="text-white bg-[#020617]">SAP FICO</option>
-                                                        <option value="Sage 50" className="text-white bg-[#020617]">Sage 50 (Peachtree)</option>
-                                                        <option value="UAE VAT" className="text-white bg-[#020617]">UAE VAT Training</option>
-                                                    </optgroup>
-
-                                                    <optgroup label="Office Administration" className="bg-[#020617] text-blue-400 font-bold">
-                                                        <option value="Advanced Excel" className="text-white bg-[#020617]">Advanced Excel</option>
-                                                        <option value="MS Office" className="text-white bg-[#020617]">MS Office</option>
-                                                        <option value="ICDL" className="text-white bg-[#020617]">ICDL</option>
-                                                        <option value="Executive Secretary" className="text-white bg-[#020617]">Executive Secretary</option>
-                                                        <option value="Document Control" className="text-white bg-[#020617]">Document Control</option>
-                                                    </optgroup>
-
-                                                    <optgroup label="Engineering & CAD" className="bg-[#020617] text-blue-400 font-bold">
-                                                        <option value="AutoCAD" className="text-white bg-[#020617]">AutoCAD 2D/3D</option>
-                                                        <option value="Revit Architecture" className="text-white bg-[#020617]">Revit Architecture</option>
-                                                        <option value="Revit Structure" className="text-white bg-[#020617]">Revit Structure</option>
-                                                        <option value="Revit MEP" className="text-white bg-[#020617]">Revit MEP</option>
-                                                        <option value="Civil 3D" className="text-white bg-[#020617]">Civil 3D</option>
-                                                        <option value="Solidworks" className="text-white bg-[#020617]">Solidworks</option>
-                                                        <option value="3ds Max" className="text-white bg-[#020617]">3ds Max & V-Ray</option>
-                                                    </optgroup>
-
-                                                    <optgroup label="Graphic Design & Animation" className="bg-[#020617] text-blue-400 font-bold">
-                                                        <option value="Graphic Design" className="text-white bg-[#020617]">Graphic Design & Multimedia</option>
-                                                        <option value="3D Animation" className="text-white bg-[#020617]">3D Modeling & Animation</option>
-                                                        <option value="Motion Graphics" className="text-white bg-[#020617]">Motion Graphics (After Effects)</option>
-                                                        <option value="Video Editing" className="text-white bg-[#020617]">Video Editing</option>
-                                                    </optgroup>
-
-                                                    <optgroup label="Project Management" className="bg-[#020617] text-blue-400 font-bold">
-                                                        <option value="PMP" className="text-white bg-[#020617]">PMP Certification</option>
-                                                        <option value="Primavera P6" className="text-white bg-[#020617]">Primavera P6</option>
-                                                        <option value="MS Project" className="text-white bg-[#020617]">MS Project</option>
-                                                    </optgroup>
-
-                                                    <optgroup label="IT & Networking" className="bg-[#020617] text-blue-400 font-bold">
-                                                        <option value="CCNA" className="text-white bg-[#020617]">Cisco CCNA</option>
-                                                        <option value="CCNP" className="text-white bg-[#020617]">Cisco CCNP</option>
-                                                        <option value="CompTIA" className="text-white bg-[#020617]">CompTIA (A+, N+, S+)</option>
-                                                        <option value="Flutter" className="text-white bg-[#020617]">Flutter Development</option>
-                                                    </optgroup>
-
-                                                    <optgroup label="Language" className="bg-[#020617] text-blue-400 font-bold">
-                                                        <option value="IELTS" className="text-white bg-[#020617]">IELTS Prep</option>
-                                                        <option value="OET" className="text-white bg-[#020617]">OET (Nurses/Doctors)</option>
-                                                        <option value="Spoken English" className="text-white bg-[#020617]">Spoken English</option>
-                                                        <option value="Spoken Arabic" className="text-white bg-[#020617]">Spoken Arabic</option>
-                                                    </optgroup>
+                                                    {sortedCategories.map(([category, titles]) => (
+                                                        <optgroup key={category} label={category} className="bg-[#020617] text-blue-400 font-bold capitalize">
+                                                            {titles.map((title) => (
+                                                                <option key={title} value={title} className="text-white bg-[#020617]">
+                                                                    {title}
+                                                                </option>
+                                                            ))}
+                                                        </optgroup>
+                                                    ))}
                                                 </select>
-                                                {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.course}</p>}
+                                                {errors.course && <p className="text-[10px] text-red-500 ml-1 flex items-center gap-1"><AlertCircle size={10} /> {errors.course.message}</p>}
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="space-y-10 pt-4 text-center relative z-10">
                                         <button
-                                            onClick={handleSubmit}
-                                            className="w-full bg-blue-600 hover:bg-blue-700 text-white py-6 rounded-xl font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-900/40"
+                                            type="submit"
+                                            disabled={isSubmitting}
+                                            className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-blue-400 disabled:cursor-not-allowed text-white py-6 rounded-xl font-bold text-base transition-all hover:scale-[1.01] active:scale-[0.99] shadow-lg shadow-blue-900/40 flex items-center justify-center gap-3"
                                         >
-                                            Submit Now
+                                            {isSubmitting ? (
+                                                <>
+                                                    <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                                                    Sending...
+                                                </>
+                                            ) : "Submit Now"}
                                         </button>
                                         <p className="text-[14px] font-normal text-white leading-relaxed font-figtree opacity-60">
                                             From zero to job-ready. Apply in 60 seconds.
                                         </p>
                                     </div>
-                                </div>
+                                </form>
                             )}
                         </div>
 

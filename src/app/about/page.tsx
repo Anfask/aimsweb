@@ -10,6 +10,7 @@ import FAQ from "@/components/FAQ"
 import MissionVision from "@/components/MissionVision"
 import CTA from "@/components/home/CTA"
 import ContactForm from "@/components/ContactForm"
+import BrandSlider from "@/components/BrandSlider"
 
 export default function About() {
     const heroRef = useRef<HTMLElement>(null)
@@ -81,6 +82,7 @@ export default function About() {
             </section>
 
             <MissionVision />
+            <BrandSlider />
             <CTA />
             <WhyChooseAIMS />
             <Stats />
