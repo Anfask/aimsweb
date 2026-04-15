@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Search, BookOpen, Clock, ChevronRight, TrendingUp, ArrowRight, Star, X } from "lucide-react"
 import _ from "lodash"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useCourses } from "@/hooks/useCourse"
 import ContactForm from "@/components/ContactForm"
@@ -79,19 +80,16 @@ function CoursesContent() {
         }
     }, [loading, searchParams, coursesData])
 
-    useEffect(() => {
+    useGSAP(() => {
         if (loading || coursesData.length === 0) return
-        const ctx = gsap.context(() => {
-            gsap.from(".hero-reveal", {
-                y: 30,
-                opacity: 0,
-                stagger: 0.12,
-                duration: 0.8,
-                ease: "power3.out",
-            })
-        }, containerRef)
-        return () => ctx.revert()
-    }, [loading, coursesData.length])
+        gsap.from(".hero-reveal", {
+            y: 30,
+            opacity: 0,
+            stagger: 0.12,
+            duration: 0.8,
+            ease: "power3.out",
+        })
+    }, { dependencies: [loading, coursesData.length], scope: containerRef })
 
     const scrollToCategory = (cat: string) => {
         setActiveCategory(cat)

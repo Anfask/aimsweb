@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react"
 import Link from "next/link"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { CheckCircle, ShieldCheck, Clock, Award, Zap, Layout, Sparkles, ArrowRight } from "lucide-react"
 
@@ -50,29 +51,25 @@ const features = [
 export default function WhyChooseUs() {
     const sectionRef = useRef<HTMLElement>(null)
 
-    useLayoutEffect(() => {
-        let ctx = gsap.context(() => {
-            gsap.from(".wcu-header", {
-                scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power2.out",
-                clearProps: "all",
-            })
-            gsap.from(".feature-card", {
-                scrollTrigger: { trigger: ".features-grid", start: "top 85%" },
-                y: 30,
-                opacity: 0,
-                stagger: 0.1,
-                duration: 0.8,
-                ease: "power2.out",
-                clearProps: "all",
-            })
-        }, sectionRef)
-
-        return () => ctx.revert()
-    }, [])
+    useGSAP(() => {
+        gsap.from(".wcu-header", {
+            scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            clearProps: "all",
+        })
+        gsap.from(".feature-card", {
+            scrollTrigger: { trigger: ".features-grid", start: "top 85%" },
+            y: 30,
+            opacity: 0,
+            stagger: 0.1,
+            duration: 0.8,
+            ease: "power2.out",
+            clearProps: "all",
+        })
+    }, { scope: sectionRef })
 
     return (
         <section

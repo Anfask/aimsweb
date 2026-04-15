@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { BadgeCheck, Users, Globe, Building, Award, TrendingUp } from "lucide-react"
 
@@ -10,24 +11,20 @@ gsap.registerPlugin(ScrollTrigger)
 export default function Stats() {
     const sectionRef = useRef<HTMLElement>(null)
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(".outcome-card", {
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 80%",
-                },
-                y: 30,
-                opacity: 0,
-                stagger: 0.1,
-                duration: 0.8,
-                ease: "power2.out",
-                clearProps: "all"
-            })
-        }, sectionRef)
-
-        return () => ctx.revert()
-    }, [])
+    useGSAP(() => {
+        gsap.from(".outcome-card", {
+            scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 80%",
+            },
+            y: 30,
+            opacity: 0,
+            stagger: 0.1,
+            duration: 0.8,
+            ease: "power2.out",
+            clearProps: "all"
+        })
+    }, { scope: sectionRef })
 
     const outcomes = [
         {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import Image from "next/image"
 import { CheckCircle, Award, Target, Users } from "lucide-react"
 import WhyChooseAIMS from "@/components/WhyChooseAIMS"
@@ -15,23 +16,19 @@ import BrandSlider from "@/components/BrandSlider"
 export default function AboutClient() {
     const heroRef = useRef<HTMLElement>(null)
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(".reveal-item", {
-                y: 50,
-                opacity: 0,
-                stagger: 0.15,
-                duration: 1,
-                ease: "power4.out",
-                scrollTrigger: {
-                    trigger: heroRef.current,
-                    start: "top 80%",
-                }
-            })
-        }, heroRef)
-
-        return () => ctx.revert()
-    }, [])
+    useGSAP(() => {
+        gsap.from(".reveal-item", {
+            y: 50,
+            opacity: 0,
+            stagger: 0.15,
+            duration: 1,
+            ease: "power4.out",
+            scrollTrigger: {
+                trigger: heroRef.current,
+                start: "top 80%",
+            }
+        })
+    }, { scope: heroRef })
 
     return (
         <div className="about-page font-figtree">

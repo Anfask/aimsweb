@@ -4,6 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useEffect, useRef, useState } from "react"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowRight, MapPin, Phone, Mail } from "lucide-react"
 import { Facebook, Twitter, Linkedin, Instagram, Youtube } from "@/components/BrandIcons"
@@ -64,29 +65,25 @@ export default function Footer() {
         fetchLocation()
     }, [])
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            // Reveal animations
-            const revealTimeline = gsap.timeline({
-                scrollTrigger: {
-                    trigger: footerRef.current,
-                    start: "top 80%",
-                }
-            })
+    useGSAP(() => {
+        // Reveal animations
+        const revealTimeline = gsap.timeline({
+            scrollTrigger: {
+                trigger: footerRef.current,
+                start: "top 80%",
+            }
+        })
 
-            revealTimeline
-                .from(brandRef.current, { y: 50, opacity: 0, duration: 0.8, ease: "power3.out", delay: 0.2 })
-                .from([linksRef.current, contactRef.current, ctaRef.current], {
-                    y: 30,
-                    opacity: 0,
-                    duration: 0.6,
-                    stagger: 0.15,
-                    ease: "power2.out"
-                }, "-=0.4")
-        }, footerRef)
-
-        return () => ctx.revert()
-    }, [])
+        revealTimeline
+            .from(brandRef.current, { y: 50, opacity: 0, duration: 0.8, ease: "power3.out", delay: 0.2 })
+            .from([linksRef.current, contactRef.current, ctaRef.current], {
+                y: 30,
+                opacity: 0,
+                duration: 0.6,
+                stagger: 0.15,
+                ease: "power2.out"
+            }, "-=0.4")
+    }, { scope: footerRef })
 
     return (
         <footer

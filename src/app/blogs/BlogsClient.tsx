@@ -4,6 +4,7 @@ import { useEffect, useRef } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowRight, BookOpen, Calendar, Quote, Star, Wind } from "lucide-react"
 import { blogPosts } from "@/data/blogs"
@@ -13,30 +14,26 @@ gsap.registerPlugin(ScrollTrigger)
 export default function BlogsClient() {
     const containerRef = useRef<HTMLDivElement>(null)
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(".blog-header", {
-                scrollTrigger: { trigger: containerRef.current, start: "top 80%" },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power2.out",
-                clearProps: "all"
-            })
+    useGSAP(() => {
+        gsap.from(".blog-header", {
+            scrollTrigger: { trigger: containerRef.current, start: "top 80%" },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            clearProps: "all"
+        })
 
-            gsap.from(".blog-card", {
-                scrollTrigger: { trigger: ".blogs-grid", start: "top 85%" },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "power2.out",
-                clearProps: "all"
-            })
-        }, containerRef)
-
-        return () => ctx.revert()
-    }, [])
+        gsap.from(".blog-card", {
+            scrollTrigger: { trigger: ".blogs-grid", start: "top 85%" },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out",
+            clearProps: "all"
+        })
+    }, { scope: containerRef })
 
     return (
         <div ref={containerRef} className="blogs-page min-h-screen bg-[#fffbf5] font-figtree py-24 md:py-32 border-t border-slate-100/50">

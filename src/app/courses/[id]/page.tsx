@@ -11,6 +11,7 @@ import { coursesData } from "@/data/courses"
 import Link from "next/link"
 import _ from "lodash"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { useEffect, useRef, useState } from "react"
 import { useForm } from "react-hook-form"
@@ -318,24 +319,21 @@ export default function CourseDetail() {
     }
     const categoryImage = course ? (CATEGORY_IMAGES[course.category] ?? "/images/excellence.png") : "/images/excellence.png"
 
-    useEffect(() => {
+    useGSAP(() => {
         if (!loading && course && allCourses.length > 0) {
-            const ctx = gsap.context(() => {
-                gsap.from(".hero-reveal", {
-                    y: 40, opacity: 0, stagger: 0.1, duration: 0.9, ease: "power3.out",
-                })
-                gsap.from(".overview-reveal", {
-                    y: 30, opacity: 0, stagger: 0.08, duration: 0.7, ease: "power2.out",
-                    scrollTrigger: { trigger: ".overview-section", start: "top 85%" },
-                })
-                gsap.from(".curriculum-reveal", {
-                    y: 30, opacity: 0, stagger: 0.06, duration: 0.7, ease: "power2.out",
-                    scrollTrigger: { trigger: ".curriculum-section", start: "top 85%" },
-                })
-            }, containerRef)
-            return () => ctx.revert()
+            gsap.from(".hero-reveal", {
+                y: 40, opacity: 0, stagger: 0.1, duration: 0.9, ease: "power3.out",
+            })
+            gsap.from(".overview-reveal", {
+                y: 30, opacity: 0, stagger: 0.08, duration: 0.7, ease: "power2.out",
+                scrollTrigger: { trigger: ".overview-section", start: "top 85%" },
+            })
+            gsap.from(".curriculum-reveal", {
+                y: 30, opacity: 0, stagger: 0.06, duration: 0.7, ease: "power2.out",
+                scrollTrigger: { trigger: ".curriculum-section", start: "top 85%" },
+            })
         }
-    }, [loading, course, allCourses.length])
+    }, { dependencies: [loading, course, allCourses.length], scope: containerRef })
 
     /* ── Loading skeleton ── */
     if (loading) return (

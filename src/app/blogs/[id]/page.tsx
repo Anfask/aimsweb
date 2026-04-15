@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { 
     ArrowLeft, 
@@ -44,11 +45,24 @@ export default function SingleBlog() {
         window.scrollTo(0, 0)
     }, [id, router])
 
-    useEffect(() => {
+    useGSAP(() => {
         if (!post || relatedPosts.length === 0) return
 
-        const ctx = gsap.context(() => {
-            gsap.from(".blog-reveal", {
+        gsap.from(".blog-reveal", {
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out",
+            clearProps: "all"
+        })
+
+        if (document.querySelector(".blog-content-grid")) {
+            gsap.from(".card-reveal", {
+                scrollTrigger: {
+                    trigger: ".blog-content-grid",
+                    start: "top 80%"
+                },
                 y: 30,
                 opacity: 0,
                 duration: 0.8,
@@ -56,25 +70,8 @@ export default function SingleBlog() {
                 ease: "power2.out",
                 clearProps: "all"
             })
-
-            if (document.querySelector(".blog-content-grid")) {
-                gsap.from(".card-reveal", {
-                    scrollTrigger: {
-                        trigger: ".blog-content-grid",
-                        start: "top 80%"
-                    },
-                    y: 30,
-                    opacity: 0,
-                    duration: 0.8,
-                    stagger: 0.1,
-                    ease: "power2.out",
-                    clearProps: "all"
-                })
-            }
-        }, containerRef)
-
-        return () => ctx.revert()
-    }, [post, relatedPosts])
+        }
+    }, { dependencies: [post, relatedPosts], scope: containerRef })
 
     if (!post) return null
 

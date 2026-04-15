@@ -3,6 +3,7 @@
 import { useLayoutEffect, useRef } from "react"
 import Link from "next/link"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowRight, Calculator, Briefcase, Compass, Palette, BookOpen, Wind, MessageCircle } from "lucide-react"
 import { useCourses } from "@/hooks/useCourse"
@@ -13,29 +14,26 @@ export default function FeaturedCourses() {
     const sectionRef = useRef<HTMLElement>(null)
     const { courses, loading } = useCourses()
 
-    useLayoutEffect(() => {
+    useGSAP(() => {
         if (loading) return
-        let ctx = gsap.context(() => {
-            gsap.from(".fc-header", {
-                scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power2.out",
-                clearProps: "all"
-            })
-            gsap.from(".course-card", {
-                scrollTrigger: { trigger: ".courses-grid", start: "top 85%" },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "power2.out",
-                clearProps: "all"
-            })
-        }, sectionRef)
-        return () => ctx.revert()
-    }, [loading])
+        gsap.from(".fc-header", {
+            scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            clearProps: "all"
+        })
+        gsap.from(".course-card", {
+            scrollTrigger: { trigger: ".courses-grid", start: "top 85%" },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out",
+            clearProps: "all"
+        })
+    }, { dependencies: [loading], scope: sectionRef })
 
     const getIcon = (category: string) => {
         const size = 32

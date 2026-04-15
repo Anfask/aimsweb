@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import Image from "next/image"
 import { Send, MapPin, Phone, Mail, ArrowRight, AlertCircle } from "lucide-react"
 import FAQ from "@/components/FAQ"
@@ -48,21 +49,17 @@ export default function ContactClient() {
         return idx !== -1 ? idx : priorityOrder.length;
     });
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            // GSAP Reveal for all items including the form
-            gsap.from(".reveal-item", {
-                y: 30,
-                opacity: 0,
-                stagger: 0.1,
-                duration: 1,
-                ease: "power3.out",
-                clearProps: "all" // Ensure properties are cleared after animation
-            })
-        }, heroRef)
-
-        return () => ctx.revert()
-    }, [])
+    useGSAP(() => {
+        // GSAP Reveal for all items including the form
+        gsap.from(".reveal-item", {
+            y: 30,
+            opacity: 0,
+            stagger: 0.1,
+            duration: 1,
+            ease: "power3.out",
+            clearProps: "all" // Ensure properties are cleared after animation
+        })
+    }, { scope: heroRef })
 
     const onSubmit = async (data: FormValues) => {
         try {

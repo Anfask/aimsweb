@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react"
 import Link from "next/link"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { ArrowRight, Sparkles, Building2, Phone, Mail } from "lucide-react"
 
@@ -11,23 +12,19 @@ gsap.registerPlugin(ScrollTrigger)
 export default function CTA() {
     const sectionRef = useRef<HTMLElement>(null)
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(".cta-banner", {
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 80%",
-                },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power2.out",
-                clearProps: "all",
-            })
-        }, sectionRef)
-
-        return () => ctx.revert()
-    }, [])
+    useGSAP(() => {
+        gsap.from(".cta-banner", {
+            scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 80%",
+            },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            clearProps: "all",
+        })
+    }, { scope: sectionRef })
 
     return (
         <section ref={sectionRef} className="pt-10 pb-20 md:pt-12 md:pb-24 bg-[#fffbf5] relative font-figtree border-t border-slate-100/50">

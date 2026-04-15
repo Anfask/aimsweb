@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import { Star, BadgeCheck, MessageCircle, ArrowRight } from "lucide-react"
 import { getGoogleRating } from "@/data/googleReviews"
@@ -135,42 +136,33 @@ export default function Testimonials() {
             }
         }
         fetchReviews()
-
-        // Animate header immediately
-        const ctx = gsap.context(() => {
-            gsap.from(".t-header", {
-                scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                ease: "power2.out",
-                clearProps: "all",
-            })
-        }, sectionRef)
-
-        return () => ctx.revert()
     }, [])
 
-    // Animate review cards AFTER reviews load into state
-    useEffect(() => {
-        if (reviews.length === 0) return
-        // rAF ensures the DOM nodes are committed before GSAP scans
-        const raf = requestAnimationFrame(() => {
-            const ctx = gsap.context(() => {
-                gsap.from(".review-card-wrap", {
-                    scrollTrigger: { trigger: ".reviews-grid", start: "top 85%" },
-                    y: 30,
-                    opacity: 0,
-                    duration: 0.6,
-                    stagger: 0.05,
-                    ease: "power2.out",
-                    clearProps: "all",
-                })
-            }, sectionRef)
-            return () => ctx.revert()
+    useGSAP(() => {
+        // Animate header immediately
+        gsap.from(".t-header", {
+            scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            ease: "power2.out",
+            clearProps: "all",
         })
-        return () => cancelAnimationFrame(raf)
-    }, [reviews])
+    }, { scope: sectionRef })
+
+    // Animate review cards AFTER reviews load into state
+    useGSAP(() => {
+        if (reviews.length === 0) return
+        gsap.from(".review-card-wrap", {
+            scrollTrigger: { trigger: ".reviews-grid", start: "top 85%" },
+            y: 30,
+            opacity: 0,
+            duration: 0.6,
+            stagger: 0.05,
+            ease: "power2.out",
+            clearProps: "all",
+        })
+    }, { dependencies: [reviews], scope: sectionRef })
 
     const displayReviews = reviews.slice(0, 4)
 

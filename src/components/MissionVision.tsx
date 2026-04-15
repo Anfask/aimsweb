@@ -2,6 +2,7 @@
 
 import { useEffect, useRef } from "react"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 import {
     Users,
@@ -90,22 +91,19 @@ const missionObjectives = [
 export default function MissionVision() {
     const sectionRef = useRef<HTMLElement>(null)
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(".reveal-mv", {
-                y: 30,
-                opacity: 0,
-                duration: 0.8,
-                stagger: 0.1,
-                ease: "power2.out",
-                scrollTrigger: {
-                    trigger: sectionRef.current,
-                    start: "top 80%",
-                }
-            })
-        }, sectionRef)
-        return () => ctx.revert()
-    }, [])
+    useGSAP(() => {
+        gsap.from(".reveal-mv", {
+            y: 30,
+            opacity: 0,
+            duration: 0.8,
+            stagger: 0.1,
+            ease: "power2.out",
+            scrollTrigger: {
+                trigger: sectionRef.current,
+                start: "top 80%",
+            }
+        })
+    }, { scope: sectionRef })
 
     return (
         <section ref={sectionRef} className="bg-[#fffbf5] pt-10 pb-20 md:pt-12 md:pb-24 font-figtree overflow-hidden">

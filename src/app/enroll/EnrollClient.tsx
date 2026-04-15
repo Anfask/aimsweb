@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react"
 import gsap from "gsap"
+import { useGSAP } from "@gsap/react"
 import Image from "next/image"
 import Link from "next/link"
 import { Send, MapPin, Phone, Mail, ArrowRight, AlertCircle, BookOpen, GraduationCap, Wind } from "lucide-react"
@@ -32,19 +33,16 @@ export default function EnrollClient() {
     // Get list of courses for the dropdown
     const courseList = _.sortBy(_.map(coursesData, 'title'))
 
-    useEffect(() => {
-        const ctx = gsap.context(() => {
-            gsap.from(".reveal-item", {
-                y: 30,
-                opacity: 0,
-                stagger: 0.1,
-                duration: 1,
-                ease: "power3.out",
-                clearProps: "all"
-            })
-        }, heroRef)
-        return () => ctx.revert()
-    }, [])
+    useGSAP(() => {
+        gsap.from(".reveal-item", {
+            y: 30,
+            opacity: 0,
+            stagger: 0.1,
+            duration: 1,
+            ease: "power3.out",
+            clearProps: "all"
+        })
+    }, { scope: heroRef })
 
     const onSubmit = async (data: FormValues) => {
         try {
