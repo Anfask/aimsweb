@@ -30,10 +30,10 @@ export default function FAQ() {
     const [openIndex, setOpenIndex] = useState<number | null>(null)
 
     return (
-        <section className="pt-10 pb-20 md:pt-12 md:pb-24 bg-[#fffbf5] font-figtree">
+        <section className="pt-6 pb-6 md:pt-12 md:pb-12 bg-[#fffbf5] font-figtree">
             <div className="container-custom mx-auto px-6 max-w-4xl">
-                <div className="text-center mb-10 md:mb-12 space-y-4">
-                    <h2 className="text-3xl md:text-4xl font-bold text-[#794d00] tracking-tight uppercase">
+                <div className="text-center mb-8 md:mb-12 space-y-4">
+                    <h2 className="text-2xl md:text-4xl font-bold text-[#794d00] tracking-tight uppercase">
                         Frequently Asked Questions
                     </h2>
                 </div>
@@ -46,12 +46,12 @@ export default function FAQ() {
                         >
                             <button
                                 onClick={() => setOpenIndex(openIndex === index ? null : index)}
-                                className="w-full px-8 py-6 flex items-center justify-between text-left hover:bg-blue-50 transition-colors group"
+                                className="w-full px-5 sm:px-8 py-4 sm:py-6 flex items-center justify-between text-left hover:bg-blue-50 transition-colors group"
                             >
-                                <span className={`text-lg font-bold transition-colors ${openIndex === index ? "text-[#794d00]" : "text-slate-800"}`}>
+                                <span className={`text-base sm:text-lg font-bold transition-colors ${openIndex === index ? "text-[#794d00]" : "text-slate-800"}`}>
                                     {faq.question}
                                 </span>
-                                <div className={`transition-transform duration-300 ${openIndex === index ? "rotate-180" : ""}`}>
+                                <div className={`transition-transform duration-300 shrink-0 ${openIndex === index ? "rotate-180" : ""}`}>
                                     {openIndex === index ? (
                                         <Minus className="text-blue-600" size={18} />
                                     ) : (
@@ -64,7 +64,7 @@ export default function FAQ() {
                                 className={`overflow-hidden transition-all duration-500 ease-in-out ${openIndex === index ? "max-h-[500px] opacity-100 border-t border-blue-50" : "max-h-0 opacity-0"
                                     }`}
                             >
-                                <div className="px-8 py-6 text-slate-600 leading-relaxed font-medium">
+                                <div className="px-5 sm:px-8 py-4 sm:py-6 text-slate-600 leading-relaxed font-medium text-[14px] sm:text-base">
                                     {faq.answer}
                                 </div>
                             </div>

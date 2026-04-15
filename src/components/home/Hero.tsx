@@ -15,7 +15,7 @@ export default function Hero() {
     return (
         <section className="relative bg-[#fffbf5] pt-32 lg:pt-40 pb-4 lg:pb-8 font-figtree overflow-hidden">
             <div className="max-w-[1400px] mx-auto px-6 sm:px-8 md:px-12 w-full">
-                <div className="grid lg:grid-cols-2 gap-16 lg:gap-8 items-center">
+                <div className="grid lg:grid-cols-2 gap-4 lg:gap-8 items-center">
 
                     {/* Left Content Area */}
                     <div className="flex flex-col items-start gap-8 z-10 w-full max-w-2xl">
@@ -35,17 +35,17 @@ export default function Hero() {
                         </p>
 
                         {/* Buttons */}
-                        <div className="flex flex-col sm:flex-row items-center gap-8 mt-2">
+                        <div className="flex flex-row items-center gap-4 sm:gap-8 mt-2">
                             <Link
                                 href="/courses"
-                                className="bg-[#794d00] text-white px-10 py-4 rounded-2xl font-bold text-[17px] transition-all hover:bg-[#1e2a3b] hover:text-blue-500 hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-[#794d00]/20 flex-shrink-0 w-full sm:w-auto text-center border-t border-white/20"
+                                className="bg-[#794d00] text-white px-6 sm:px-10 py-4 rounded-2xl font-bold text-[17px] transition-all hover:bg-[#1e2a3b] hover:text-blue-500 hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-[#794d00]/20 flex-shrink-0 w-auto text-center border-t border-white/20"
                             >
                                 Enroll Now
                             </Link>
 
                             <Link href="/about" className="group flex items-center gap-3 text-[#794d00] font-bold text-[17px] hover:opacity-80 transition-opacity">
                                 <PlayCircle size={32} strokeWidth={2} className="fill-[#794d00]/10 group-hover:scale-110 transition-transform" />
-                                Learn More
+                                <span className="whitespace-nowrap">Learn More</span>
                             </Link>
                         </div>
 
@@ -54,7 +54,7 @@ export default function Hero() {
                             href={`https://search.google.com/local/reviews?placeid=${process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || 'ChIJH1GPIFlmXj4RGXfJA5vymIo'}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-4 mt-8 px-6 py-4 bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-200/60 group cursor-pointer"
+                            className="inline-flex items-center gap-4 mt-1 px-6 py-4 bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-200/60 group cursor-pointer"
                         >
                             {/* Google G Logo SVG */}
                             <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg" className="group-hover:scale-110 transition-transform duration-300">
@@ -84,7 +84,7 @@ export default function Hero() {
                     <div className="relative w-full flex justify-center lg:justify-end">
 
                         {/* Main Composite Image */}
-                        <div className="relative w-full max-w-[600px] xl:max-w-[700px] z-0 mt-10 lg:mt-0">
+                        <div className="relative w-full max-w-[600px] xl:max-w-[700px] z-0 mt-0">
                             <img
                                 src="/images/emirati-male-student.png"
                                 alt="Emirati male student growing knowledge"
@@ -92,34 +92,34 @@ export default function Hero() {
                             />
 
                             {/* Floating Card 1 (UI Design Class) */}
-                            <div className="absolute top-[65%] left-0 sm:-left-4 xl:-left-12 bg-white/98 backdrop-blur-xl px-4 py-4 rounded-[20px] shadow-[0_24px_50px_-12px_rgba(121,77,0,0.2)] flex flex-col gap-4 min-w-[200px] animate-float border border-[#794d00]/5">
-                                <div className="flex items-center gap-3">
-                                    <div className="w-[42px] h-[42px] rounded-full bg-[#25D366] flex items-center justify-center shadow-sm shrink-0">
-                                        <Whatsapp size={24} stroke="white" />
+                            <div className="absolute top-[65%] left-0 sm:-left-4 xl:-left-12 bg-white/98 backdrop-blur-xl px-3 py-3 sm:px-4 sm:py-4 rounded-[20px] shadow-[0_24px_50px_-12px_rgba(121,77,0,0.2)] flex flex-col gap-3 sm:gap-4 min-w-[160px] sm:min-w-[200px] animate-float border border-[#794d00]/5">
+                                <div className="flex items-center gap-2 sm:gap-3">
+                                    <div className="w-8 h-8 sm:w-[42px] sm:h-[42px] rounded-full bg-[#25D366] flex items-center justify-center shadow-sm shrink-0">
+                                        <Whatsapp size={18} className="sm:w-6 sm:h-6" stroke="white" />
                                     </div>
                                     <div className="flex flex-col justify-center gap-0.5">
-                                        <span className="font-bold text-[14px] text-slate-900 leading-tight">Free webinars & Courses</span>
-                                        <span className="text-[12px] font-medium text-slate-500">Join Our Community</span>
+                                        <span className="font-bold text-[12px] sm:text-[14px] text-slate-900 leading-tight">Free webinars & Courses</span>
+                                        <span className="text-[10px] sm:text-[12px] font-medium text-slate-500">Join Our Community</span>
                                     </div>
                                 </div>
                                 <a
                                     href="https://chat.whatsapp.com/EuN3RJA0u8y4hexHboUlMQ"
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="w-full bg-[#794d00] text-center text-white text-[13px] font-bold py-2.5 rounded-xl hover:bg-[#1e2a3b] hover:text-blue-500 transition-all shadow-md shadow-[#794d00]/20 block"
+                                    className="w-full bg-[#794d00] text-center text-white text-[11px] sm:text-[13px] font-bold py-2 sm:py-2.5 rounded-xl hover:bg-[#1e2a3b] hover:text-blue-500 transition-all shadow-md shadow-[#794d00]/20 block"
                                 >
                                     Join now
                                 </a>
                             </div>
 
                             {/* Floating Card 2 (200+ Courses) */}
-                            <div className="absolute top-[45%] right-0 sm:right-0 xl:-right-6 bg-white/98 backdrop-blur-xl pl-3 pr-6 py-3 rounded-full shadow-[0_24px_40px_-12px_rgba(121,77,0,0.15)] flex items-center gap-4 animate-float-delayed border border-[#794d00]/5">
-                                <div className="w-12 h-12 rounded-full bg-[#794d00] flex items-center justify-center text-white shrink-0 shadow-inner">
-                                    <ArrowUpRight size={22} strokeWidth={2.5} />
+                            <div className="absolute top-[45%] right-0 sm:right-0 xl:-right-6 bg-white/98 backdrop-blur-xl pl-2 pr-4 py-2 sm:pl-3 sm:pr-6 sm:py-3 rounded-full shadow-[0_24px_40px_-12px_rgba(121,77,0,0.15)] flex items-center gap-3 sm:gap-4 animate-float-delayed border border-[#794d00]/5">
+                                <div className="w-9 h-9 sm:w-12 sm:h-12 rounded-full bg-[#794d00] flex items-center justify-center text-white shrink-0 shadow-inner">
+                                    <ArrowUpRight size={18} className="sm:w-[22px] sm:h-[22px]" strokeWidth={2.5} />
                                 </div>
                                 <div className="flex flex-col justify-center">
-                                    <span className="font-bold text-[17px] text-slate-900 leading-[1.1]">200+</span>
-                                    <span className="text-[14px] font-semibold text-slate-500">Online and in-person learning</span>
+                                    <span className="font-bold text-[14px] sm:text-[17px] text-slate-900 leading-[1.1]">200+</span>
+                                    <span className="text-[11px] sm:text-[14px] font-semibold text-slate-500">Online and in-person learning</span>
                                 </div>
                             </div>
 

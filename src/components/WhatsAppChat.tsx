@@ -19,10 +19,10 @@ export default function WhatsAppChat() {
     useEffect(() => {
         // Set local time
         const now = new Date()
-        setCurrentTime(now.toLocaleTimeString('en-US', { 
-            hour: '2-digit', 
-            minute: '2-digit', 
-            hour12: true 
+        setCurrentTime(now.toLocaleTimeString('en-US', {
+            hour: '2-digit',
+            minute: '2-digit',
+            hour12: true
         }))
 
         // Show tooltip after 3 seconds
@@ -105,7 +105,7 @@ export default function WhatsAppChat() {
                     ${showTooltip && !isOpen ? 'opacity-100 scale-100 translate-y-0' : 'opacity-0 scale-75 translate-y-4 pointer-events-none'}
                 `}>
                     <p className="text-[13px] font-bold text-slate-800 flex items-center gap-2 whitespace-nowrap">
-                        Get free consultation?
+                        Get free consultation
                     </p>
                 </div>
 

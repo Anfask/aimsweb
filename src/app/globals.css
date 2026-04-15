@@ -57,6 +57,14 @@
   .btn-secondary {
     @apply border-2 border-blue-700 text-blue-700 px-8 py-4 hover:bg-blue-50;
   }
+
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Lenis CSS */

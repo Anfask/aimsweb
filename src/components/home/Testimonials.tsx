@@ -41,7 +41,8 @@ function ReviewStars({ rating = 5 }: { rating?: number }) {
     )
 }
 
-function ReviewCard({ data }: { data: ReviewData }) {
+function ReviewCard({ data, onExpandChange }: { data: ReviewData, onExpandChange?: (isExpanded: boolean) => void }) {
+    const [isExpanded, setIsExpanded] = useState(false)
     const initials = data.author
         .split(" ")
         .map((n) => n[0])
@@ -53,7 +54,7 @@ function ReviewCard({ data }: { data: ReviewData }) {
 
     return (
         <div
-            className="group relative bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 p-6 flex flex-col gap-4 transition-all duration-300 hover:scale-[1.01] overflow-hidden"
+            className="group relative bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 p-5 sm:p-6 flex flex-col gap-3 sm:gap-4 transition-all duration-300 hover:scale-[1.01] overflow-hidden"
         >
             {/* Google colour bar on hover */}
             <div className="absolute top-0 left-0 right-0 h-[3px] bg-gradient-to-r from-blue-500 via-red-400 to-yellow-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
@@ -67,16 +68,19 @@ function ReviewCard({ data }: { data: ReviewData }) {
             {/* Review text */}
             <div className="flex-1 z-10 relative">
                 <p className="text-[14px] text-slate-500 font-medium leading-relaxed">
-                    &ldquo;{displayText}&rdquo;
+                    &ldquo;{isExpanded ? data.text : displayText}&rdquo;
                     {isLong && (
-                        <a
-                            href={`https://search.google.com/local/reviews?placeid=${process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || 'ChIJH1GPIFlmXj4RGXfJA5vymIo'}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="ml-2 font-bold text-slate-400 hover:text-[#794d00] transition-colors text-[13px] uppercase tracking-wide inline-block"
+                        <button
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                const nextState = !isExpanded;
+                                setIsExpanded(nextState);
+                                if (onExpandChange) onExpandChange(nextState);
+                            }}
+                            className="ml-2 font-black text-blue-600 hover:text-[#794d00] transition-colors text-[11px] uppercase tracking-wide inline-block"
                         >
-                            Read More
-                        </a>
+                            {isExpanded ? 'Show Less' : 'Read More'}
+                        </button>
                     )}
                 </p>
             </div>
@@ -110,6 +114,11 @@ export default function Testimonials() {
     const sectionRef = useRef<HTMLElement>(null)
     const [reviews, setReviews] = useState<ReviewData[]>([])
     const [reviewData, setReviewData] = useState({ rating: "4.9", totalReviews: "1000+" })
+    const [activeDot, setActiveDot] = useState(0)
+    const [isPaused, setIsPaused] = useState(false)
+    const scrollRef = useRef<HTMLDivElement>(null)
+
+    const displayReviews = reviews.slice(0, 4)
 
     useEffect(() => {
         // Fetch rating stats
@@ -138,6 +147,24 @@ export default function Testimonials() {
         fetchReviews()
     }, [])
 
+    useEffect(() => {
+        // Auto-slider logic for mobile
+        const interval = setInterval(() => {
+            if (!scrollRef.current || window.innerWidth >= 640 || isPaused) return
+            
+            const nextIndex = (activeDot + 1) % displayReviews.length
+            const width = scrollRef.current.offsetWidth
+            
+            scrollRef.current.scrollTo({
+                left: nextIndex * width,
+                behavior: 'smooth'
+            })
+            setActiveDot(nextIndex)
+        }, 5000)
+
+        return () => clearInterval(interval)
+    }, [activeDot, displayReviews.length, isPaused])
+
     useGSAP(() => {
         // Animate header immediately
         gsap.from(".t-header", {
@@ -154,7 +181,7 @@ export default function Testimonials() {
     useGSAP(() => {
         if (reviews.length === 0) return
         gsap.from(".review-card-wrap", {
-            scrollTrigger: { trigger: ".reviews-grid", start: "top 85%" },
+            scrollTrigger: { trigger: ".reviews-slider", start: "top 85%" },
             y: 30,
             opacity: 0,
             duration: 0.6,
@@ -164,35 +191,41 @@ export default function Testimonials() {
         })
     }, { dependencies: [reviews], scope: sectionRef })
 
-    const displayReviews = reviews.slice(0, 4)
+    const handleScroll = () => {
+        if (!scrollRef.current) return
+        const scrollPos = scrollRef.current.scrollLeft
+        const width = scrollRef.current.offsetWidth
+        const index = Math.round(scrollPos / width)
+        setActiveDot(index)
+    }
 
     return (
         <section
             ref={sectionRef}
-            className="pt-10 pb-20 md:pt-12 md:pb-24 bg-[#fffbf5] font-figtree overflow-hidden border-t border-slate-100/50"
+            className="pt-6 pb-6 md:pt-12 md:pb-12 bg-[#fffbf5] font-figtree overflow-hidden border-t border-slate-100/50"
         >
             <div className="container-custom mx-auto px-6">
 
                 {/* ── Header ── */}
-                <div className="t-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12">
-                    <div className="space-y-4">
-                        <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">
-                            <MessageCircle size={14} className="text-blue-500" /> Student Success
+                <div className="t-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-8 mb-8 sm:mb-12">
+                    <div className="space-y-2 sm:space-y-4">
+                        <span className="text-[#794d00] font-bold tracking-widest text-[10px] sm:text-xs uppercase flex items-center gap-2">
+                            <MessageCircle size={12} className="text-blue-500 sm:w-[14px] sm:h-[14px]" /> Student Success
                         </span>
-                        <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#794d00] tracking-tight uppercase max-w-xl leading-tight">
+                        <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#794d00] tracking-tight uppercase max-w-xl leading-tight">
                             Our Community&apos;s <span className="text-slate-900">Success Stories.</span>
                         </h2>
                     </div>
 
                     {/* Google badge */}
-                    <div className="flex items-center gap-3 px-5 py-3 bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50">
-                        <GoogleLogo className="w-6 h-6" />
+                    <div className="flex items-center gap-3 px-4 py-2.5 sm:px-5 sm:py-3 bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50">
+                        <GoogleLogo className="w-5 h-5 sm:w-6 sm:h-6" />
                         <div>
                             <div className="flex items-center gap-2">
-                                <span className="font-bold text-[#0f172a] text-sm">{reviewData.rating}</span>
+                                <span className="font-bold text-[#0f172a] text-xs sm:text-sm">{reviewData.rating}</span>
                                 <ReviewStars rating={Math.round(Number(reviewData.rating)) || 5} />
                             </div>
-                            <span className="text-[10px] text-slate-400 font-medium tracking-wide uppercase">
+                            <span className="text-[9px] sm:text-[10px] text-slate-400 font-medium tracking-wide uppercase">
                                 Read {reviewData.totalReviews} Reviews
                             </span>
                         </div>
@@ -200,16 +233,37 @@ export default function Testimonials() {
                 </div>
 
                 {/* ── Lunchbox Grid ── */}
-                <div className="reviews-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-                    {displayReviews.map((review, i) => (
-                        <div key={i} className="review-card-wrap">
-                            <ReviewCard data={review} />
-                        </div>
-                    ))}
+                {/* ── Mobile/Desktop Reviews Container ── */}
+                <div className="relative group/slider">
+                    <div 
+                        ref={scrollRef}
+                        onScroll={handleScroll}
+                        data-lenis-prevent
+                        className="reviews-slider flex items-start sm:grid sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 overflow-x-auto sm:overflow-x-visible snap-x snap-mandatory sm:snap-none no-scrollbar pb-4 sm:pb-0"
+                    >
+                        {displayReviews.map((review, i) => (
+                            <div key={i} className="review-card-wrap flex-shrink-0 w-[calc(100vw-48px)] sm:w-auto snap-center">
+                                <ReviewCard 
+                                    data={review} 
+                                    onExpandChange={(expanded) => setIsPaused(expanded)}
+                                />
+                            </div>
+                        ))}
+                    </div>
+
+                    {/* Mobile Dot Indicators */}
+                    <div className="flex sm:hidden justify-center gap-2 mt-4">
+                        {displayReviews.map((_, i) => (
+                            <div 
+                                key={i}
+                                className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeDot === i ? 'bg-blue-500 w-4' : 'bg-slate-200'}`}
+                            />
+                        ))}
+                    </div>
                 </div>
 
                 {/* ── Footer bar ── */}
-                <div className="mt-16 flex flex-col md:flex-row items-center justify-between gap-6 pt-10 border-t border-slate-100/50">
+                <div className="mt-6 sm:mt-16 flex flex-col md:flex-row items-center justify-between gap-6 pt-6 sm:pt-10 border-t border-slate-100/50">
                     <div className="flex items-center gap-3 text-[#794d00] font-bold text-xs tracking-widest uppercase">
                         <MessageCircle size={18} className="text-blue-500" />
                         Thousands of trusted student opinions
@@ -218,7 +272,7 @@ export default function Testimonials() {
                         href={`https://search.google.com/local/reviews?placeid=${process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || 'ChIJH1GPIFlmXj4RGXfJA5vymIo'}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="group inline-flex items-center gap-3 text-[10px] font-black tracking-widest uppercase text-[#794d00] hover:text-slate-900 transition-colors"
+                        className="group inline-flex items-center gap-3 text-[10px] font-black tracking-widest uppercase text-[#794d00] hover:text-slate-900 transition-colors self-end md:self-auto"
                     >
                         Read More Reviews
                         <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />

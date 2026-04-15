@@ -153,18 +153,18 @@ const LogoTrack = ({
 
 const BrandSlider = () => {
     return (
-        <section className="pt-20 pb-10 md:pt-24 md:pb-12 bg-[#fffbf5] font-figtree border-t border-slate-100/50 overflow-hidden relative">
-            <div className="container-custom mx-auto px-6 mb-12">
+        <section className="pt-6 pb-6 md:pt-24 md:pb-12 bg-[#fffbf5] font-figtree border-t border-slate-100/50 overflow-hidden relative">
+            <div className="container-custom mx-auto px-6 mb-8 sm:mb-12">
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
-                    <div className="space-y-4">
-                        <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">
-                            <Wind size={14} className="text-blue-500" /> Strategic Partners
+                    <div className="space-y-2 sm:space-y-4">
+                        <span className="text-[#794d00] font-bold tracking-widest text-[10px] sm:text-xs uppercase flex items-center gap-2">
+                            <Wind size={12} className="text-blue-500 sm:w-[14px] sm:h-[14px]" /> Strategic Partners
                         </span>
-                        <h2 className="text-3xl md:text-5xl font-bold text-[#794d00] tracking-tight uppercase max-w-2xl leading-tight">
+                        <h2 className="text-2xl md:text-5xl font-bold text-[#794d00] tracking-tight uppercase max-w-2xl leading-tight">
                             Trusted by <span className="text-slate-900">Industry Leaders.</span>
                         </h2>
                     </div>
-                    <p className="text-slate-600 text-lg max-w-xl leading-relaxed">
+                    <p className="text-slate-600 text-base sm:text-lg max-w-xl leading-relaxed">
                         Collaborating with world-class organizations to deliver professional excellence and certified training benchmarks across the globe.
                     </p>
                 </div>
