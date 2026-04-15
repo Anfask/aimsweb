@@ -23,7 +23,7 @@ export default function Hero() {
                         {/* Headline */}
                         <h1 className="font-extrabold text-slate-900 leading-[1.1] tracking-tight text-4xl sm:text-5xl xl:text-[60px]">
                             Education is the best<br className="hidden md:block" />
-                            way to <span className="text-[#794d00]">Grow Up Your<br className="hidden xl:block" />
+                            way to <span className="text-[#794d00]">Grow Up Your <br className="hidden xl:block" />
                                 Knowledge</span>
                         </h1>
 
