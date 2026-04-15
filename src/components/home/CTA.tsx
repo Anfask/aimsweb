@@ -30,13 +30,13 @@ export default function CTA() {
     }, [])
 
     return (
-        <section ref={sectionRef} className="py-24 bg-[#fffbf5] relative font-figtree border-t border-slate-100/50">
+        <section ref={sectionRef} className="pt-10 pb-20 md:pt-12 md:pb-24 bg-[#fffbf5] relative font-figtree border-t border-slate-100/50">
             <div className="container-custom mx-auto px-6">
                 
-                <div className="cta-banner relative bg-white w-full p-10 md:p-14 lg:p-16 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-10 overflow-hidden hover:shadow-2xl hover:shadow-slate-200/60 transition-all duration-300">
+                <div className="cta-banner relative bg-white w-full p-8 md:p-10 lg:p-12 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-8 overflow-hidden hover:shadow-2xl hover:shadow-slate-200/60 transition-all duration-300">
                     
                     {/* Content Left */}
-                    <div className="relative z-10 max-w-2xl space-y-5">
+                    <div className="relative z-10 max-w-2xl space-y-4">
                         <h2 className="text-3xl md:text-4xl lg:text-[42px] font-bold text-[#794d00] leading-[1.1] tracking-tight uppercase">
                             Next Can be You!! <br className="hidden sm:block" />
                             <span className="text-slate-900">Turn Your Passion Into a Professional Career</span>

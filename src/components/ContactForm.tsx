@@ -77,10 +77,10 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
   }
 
   return (
-    <section className="relative w-full py-24 md:py-32 flex items-center justify-center overflow-hidden font-figtree">
+    <section className="relative w-full pt-10 pb-20 md:pt-12 md:pb-24 flex items-center justify-center overflow-hidden font-figtree">
       {/* Background with parallax-like 'fixed' attachment */}
       <div
-        className="absolute inset-0 z-0 bg-[url('/contact_hero_bg.png')] bg-cover bg-center bg-no-repeat bg-fixed transform scale-105"
+        className="absolute inset-0 z-0 bg-[url('/contact_hero_bg.png')] bg-cover bg-center bg-no-repeat transform scale-105"
       >
         <div className="absolute inset-0 bg-[#020617]/40 bg-gradient-to-t from-[#020617] via-transparent to-transparent"></div>
       </div>
@@ -174,7 +174,10 @@ export default function ContactForm({ defaultCourse }: ContactFormProps) {
 
                     {/* Custom Searchable Dropdown */}
                     {isDropdownOpen && !defaultCourse && (
-                      <div className="absolute top-[calc(100%+8px)] left-0 w-full z-[100] bg-[#0f172a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl max-h-[280px] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/10 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                      <div 
+                        data-lenis-prevent
+                        className="absolute top-[calc(100%+8px)] left-0 w-full z-[100] bg-[#0f172a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl max-h-[280px] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/10 p-2 animate-in fade-in slide-in-from-top-2 duration-200"
+                      >
                         {Object.keys(groupedCourses).length > 0 ? (
                           _.sortBy(Object.entries(groupedCourses), ([catA]) => {
                             const priority = [

@@ -182,7 +182,10 @@ function CourseEnquiryForm({ submitLabel = "Submit Now", defaultCourse }: { subm
 
                         {/* Custom Searchable Dropdown */}
                         {isDropdownOpen && !defaultCourse && (
-                            <div className="absolute top-[calc(100%+8px)] left-0 w-full z-[100] bg-[#0f172a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl max-h-[280px] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/10 p-2 animate-in fade-in slide-in-from-top-2 duration-200">
+                            <div 
+                                data-lenis-prevent
+                                className="absolute top-[calc(100%+8px)] left-0 w-full z-[100] bg-[#0f172a]/95 backdrop-blur-2xl border border-white/10 rounded-2xl shadow-2xl max-h-[280px] overflow-y-auto overscroll-contain scrollbar-thin scrollbar-thumb-white/10 p-2 animate-in fade-in slide-in-from-top-2 duration-200"
+                            >
                                 {Object.keys(groupedCourses).length > 0 ? (
                                     Object.entries(groupedCourses).map(([category, titles]) => (
                                         <div key={category} className="mb-2 last:mb-0">
@@ -377,7 +380,7 @@ export default function CourseDetail() {
             <section className="relative w-full min-h-screen flex items-center overflow-hidden">
 
                 {/* Background image — identical setup to ContactForm.tsx */}
-                <div className="absolute inset-0 z-0 bg-[url('/contact_hero_bg.png')] bg-cover bg-center bg-no-repeat bg-fixed transform scale-105">
+                <div className="absolute inset-0 z-0 bg-[url('/contact_hero_bg.png')] bg-cover bg-center bg-no-repeat transform scale-105">
                     <div className="absolute inset-0 bg-[#020617]/60 bg-gradient-to-t from-[#020617] via-[#020617]/40 to-transparent" />
                 </div>
 

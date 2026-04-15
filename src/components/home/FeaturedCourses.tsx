@@ -71,12 +71,12 @@ export default function FeaturedCourses() {
     return (
         <section
             ref={sectionRef}
-            className="bg-[#fffbf5] py-24 md:py-32 font-figtree border-t border-slate-100/50 overflow-hidden relative"
+            className="bg-[#fffbf5] pt-10 pb-20 md:pt-12 md:pb-24 font-figtree border-t border-slate-100/50 overflow-hidden relative"
         >
             <div className="container-custom mx-auto px-6">
 
                 {/* ── Header ── */}
-                <div className="fc-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-20">
+                <div className="fc-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12">
                     <div className="space-y-4">
                         <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">
                             <Wind size={14} className="text-blue-500" /> Kinetic Programs

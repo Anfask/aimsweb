@@ -119,7 +119,7 @@ export default function Stats() {
     ]
 
     return (
-        <section ref={containerRef} className="py-24 bg-[#fffbf5] relative overflow-hidden font-figtree">
+        <section ref={containerRef} className="pt-10 pb-20 md:pt-12 md:pb-24 bg-[#fffbf5] relative overflow-hidden font-figtree">
             {/* Soft Ambient Glow Background */}
             <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-[200%] bg-gradient-to-b from-orange-100/20 via-transparent to-transparent rotate-12 blur-[120px] pointer-events-none"></div>
 

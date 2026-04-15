@@ -42,9 +42,9 @@ const features = [
 
 export default function WhyChooseAIMS() {
     return (
-        <section className="bg-[#fffbf5] py-24 md:py-32 font-figtree overflow-hidden">
+        <section className="bg-[#fffbf5] pt-10 pb-20 md:pt-12 md:pb-24 font-figtree overflow-hidden">
             <div className="container-custom mx-auto px-6">
-                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-20">
+                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12">
                     <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#794d00] tracking-tight uppercase max-w-xl font-figtree">
                         Why Choose AIMS ?
                     </h2>

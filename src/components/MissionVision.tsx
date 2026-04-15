@@ -103,17 +103,17 @@ export default function MissionVision() {
                     start: "top 80%",
                 }
             })
-        })
+        }, sectionRef)
         return () => ctx.revert()
     }, [])
 
     return (
-        <section ref={sectionRef} className="bg-[#fffbf5] py-24 md:py-32 font-figtree overflow-hidden">
+        <section ref={sectionRef} className="bg-[#fffbf5] pt-10 pb-20 md:pt-12 md:pb-24 font-figtree overflow-hidden">
             <div className="container-custom mx-auto px-6">
 
                 {/* --- Vision Section --- */}
                 <div className="mb-24">
-                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-16 reveal-mv">
+                    <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12 reveal-mv">
                         <div className="space-y-4">
                             <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">
                                 <Target size={14} /> Our Vision
@@ -136,7 +136,7 @@ export default function MissionVision() {
 
                 {/* --- Mission Section --- */}
                 <div>
-                    <div className="flex flex-col lg:flex-row-reverse justify-between items-start lg:items-center gap-8 mb-16 reveal-mv">
+                    <div className="flex flex-col lg:flex-row-reverse justify-between items-start lg:items-center gap-8 mb-12 reveal-mv">
                         <div className="space-y-4 text-left lg:text-right">
                             <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center justify-start lg:justify-end gap-2">
                                 <Zap size={14} /> Our Mission

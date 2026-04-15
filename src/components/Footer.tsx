@@ -83,7 +83,7 @@ export default function Footer() {
                     stagger: 0.15,
                     ease: "power2.out"
                 }, "-=0.4")
-        })
+        }, footerRef)
 
         return () => ctx.revert()
     }, [])

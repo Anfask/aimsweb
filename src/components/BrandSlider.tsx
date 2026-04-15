@@ -127,7 +127,7 @@ const LogoTrack = ({
     const doubled = [...items, ...items]
 
     return (
-        <div className="relative flex overflow-hidden mb-8">
+        <div className="relative flex overflow-hidden">
             <div
                 ref={trackRef}
                 className="flex gap-8 items-center shrink-0 w-max"
@@ -153,8 +153,8 @@ const LogoTrack = ({
 
 const BrandSlider = () => {
     return (
-        <section className="py-24 md:py-32 bg-[#fffbf5] font-figtree border-t border-slate-100/50 overflow-hidden relative">
-            <div className="container-custom mx-auto px-6 mb-20">
+        <section className="pt-20 pb-10 md:pt-24 md:pb-12 bg-[#fffbf5] font-figtree border-t border-slate-100/50 overflow-hidden relative">
+            <div className="container-custom mx-auto px-6 mb-12">
                 <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8">
                     <div className="space-y-4">
                         <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">
@@ -170,7 +170,7 @@ const BrandSlider = () => {
                 </div>
             </div>
 
-            <div className="max-w-[100vw] relative">
+            <div className="max-w-[100vw] relative flex flex-col gap-8">
                 {/* Row 1 → Left */}
                 <LogoTrack items={row1} direction="left" speed={50} />
                 {/* Row 2 → Right (opposite) */}

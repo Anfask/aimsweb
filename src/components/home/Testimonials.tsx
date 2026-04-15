@@ -177,12 +177,12 @@ export default function Testimonials() {
     return (
         <section
             ref={sectionRef}
-            className="py-24 md:py-32 bg-[#fffbf5] font-figtree overflow-hidden border-t border-slate-100/50"
+            className="pt-10 pb-20 md:pt-12 md:pb-24 bg-[#fffbf5] font-figtree overflow-hidden border-t border-slate-100/50"
         >
             <div className="container-custom mx-auto px-6">
 
                 {/* ── Header ── */}
-                <div className="t-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-20">
+                <div className="t-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-12">
                     <div className="space-y-4">
                         <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">
                             <MessageCircle size={14} className="text-blue-500" /> Student Success
