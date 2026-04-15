@@ -1,15 +1,33 @@
 "use client"
 
-import { ReactNode, useEffect, useRef } from "react"
+import { ReactNode, useEffect, useRef, Suspense } from "react"
 import { usePathname, useSearchParams } from "next/navigation"
 import Lenis from "lenis"
 import gsap from "gsap"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
 
-export default function SmoothScroll({ children }: { children: ReactNode }) {
-    const lenisRef = useRef<Lenis | null>(null)
+function ScrollManager({ lenisRef }: { lenisRef: React.RefObject<Lenis | null> }) {
     const pathname = usePathname()
     const searchParams = useSearchParams()
+
+    // Handle Route Changes
+    useEffect(() => {
+        if (lenisRef.current) {
+            // Reset scroll to top on page change
+            lenisRef.current.scrollTo(0, { immediate: true })
+            
+            // Give Next.js a moment to render then refresh ScrollTrigger
+            setTimeout(() => {
+                ScrollTrigger.refresh()
+            }, 100)
+        }
+    }, [pathname, searchParams, lenisRef])
+
+    return null
+}
+
+export default function SmoothScroll({ children }: { children: ReactNode }) {
+    const lenisRef = useRef<Lenis | null>(null)
 
     useEffect(() => {
         // Initialize Lenis
@@ -45,18 +63,12 @@ export default function SmoothScroll({ children }: { children: ReactNode }) {
         }
     }, [])
 
-    // Handle Route Changes
-    useEffect(() => {
-        if (lenisRef.current) {
-            // Reset scroll to top on page change
-            lenisRef.current.scrollTo(0, { immediate: true })
-            
-            // Give Next.js a moment to render then refresh ScrollTrigger
-            setTimeout(() => {
-                ScrollTrigger.refresh()
-            }, 100)
-        }
-    }, [pathname, searchParams])
-
-    return <>{children}</>
+    return (
+        <>
+            <Suspense fallback={null}>
+                <ScrollManager lenisRef={lenisRef} />
+            </Suspense>
+            {children}
+        </>
+    )
 }
