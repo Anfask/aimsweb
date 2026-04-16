@@ -18,7 +18,7 @@ export default function Hero() {
                 <div className="grid lg:grid-cols-2 gap-4 lg:gap-8 items-center">
 
                     {/* Left Content Area */}
-                    <div className="flex flex-col items-start gap-8 z-10 w-full max-w-2xl">
+                    <div className="flex flex-col items-start gap-5 z-10 w-full max-w-2xl">
 
                         {/* Headline */}
                         <h1 className="font-extrabold text-slate-900 leading-[1.1] tracking-tight text-4xl sm:text-5xl xl:text-[60px]">
@@ -35,16 +35,16 @@ export default function Hero() {
                         </p>
 
                         {/* Buttons */}
-                        <div className="flex flex-row items-center gap-4 sm:gap-8 mt-2">
+                        <div className="flex flex-row items-center gap-2 sm:gap-4 mt-0.5">
                             <Link
                                 href="/courses"
-                                className="bg-[#794d00] text-white px-6 sm:px-10 py-4 rounded-2xl font-bold text-[17px] transition-all hover:bg-[#1e2a3b] hover:text-blue-500 hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-[#794d00]/20 flex-shrink-0 w-auto text-center border-t border-white/20"
+                                className="bg-[#794d00] text-white px-5 sm:px-8 py-3 rounded-2xl font-bold text-[16px] transition-all hover:bg-[#1e2a3b] hover:text-blue-500 hover:scale-[1.02] active:scale-[0.98] shadow-xl shadow-[#794d00]/20 flex-shrink-0 w-auto text-center border-t border-white/20"
                             >
                                 Enroll Now
                             </Link>
 
-                            <Link href="/about" className="group flex items-center gap-3 text-[#794d00] font-bold text-[17px] hover:opacity-80 transition-opacity">
-                                <PlayCircle size={32} strokeWidth={2} className="fill-[#794d00]/10 group-hover:scale-110 transition-transform" />
+                            <Link href="/about" className="group flex items-center gap-2 text-[#794d00] font-bold text-[16px] hover:opacity-80 transition-opacity">
+                                <PlayCircle size={28} strokeWidth={2} className="fill-[#794d00]/10 group-hover:scale-110 transition-transform" />
                                 <span className="whitespace-nowrap">Learn More</span>
                             </Link>
                         </div>
@@ -54,7 +54,7 @@ export default function Hero() {
                             href={`https://search.google.com/local/reviews?placeid=${process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || 'ChIJH1GPIFlmXj4RGXfJA5vymIo'}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="inline-flex items-center gap-4 mt-1 px-6 py-4 bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-200/60 group cursor-pointer"
+                            className="hidden lg:inline-flex items-center gap-4 mt-1 px-6 py-4 bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] hover:-translate-y-1 hover:shadow-2xl hover:shadow-slate-200/60 group cursor-pointer"
                         >
                             {/* Google G Logo SVG */}
                             <svg viewBox="0 0 24 24" width="28" height="28" xmlns="http://www.w3.org/2000/svg" className="group-hover:scale-110 transition-transform duration-300">
@@ -84,13 +84,12 @@ export default function Hero() {
                     <div className="relative w-full flex justify-center lg:justify-end">
 
                         {/* Main Composite Image */}
-                        <div className="relative w-full max-w-[600px] xl:max-w-[700px] z-0 mt-0">
+                        <div className="relative w-full max-w-[520px] xl:max-w-[620px] z-0 mt-0">
                             <img
                                 src="/images/emirati-male-student.png"
                                 alt="Emirati male student growing knowledge"
                                 className="w-full h-auto object-contain mix-blend-darken"
                             />
-
                             {/* Floating Card 1 (UI Design Class) */}
                             <div className="absolute top-[65%] left-0 sm:-left-4 xl:-left-12 bg-white/98 backdrop-blur-xl px-3 py-3 sm:px-4 sm:py-4 rounded-[20px] shadow-[0_24px_50px_-12px_rgba(121,77,0,0.2)] flex flex-col gap-3 sm:gap-4 min-w-[160px] sm:min-w-[200px] animate-float border border-[#794d00]/5">
                                 <div className="flex items-center gap-2 sm:gap-3">

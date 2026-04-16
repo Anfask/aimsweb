@@ -5,7 +5,7 @@ import Link from "next/link"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowRight, Calculator, Briefcase, Compass, Palette, BookOpen, Wind, MessageCircle } from "lucide-react"
+import { ArrowRight, Calculator, Briefcase, Compass, Palette, BookOpen, Wind, MessageCircle, Network } from "lucide-react"
 import { useCourses } from "@/hooks/useCourse"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -44,7 +44,7 @@ export default function FeaturedCourses() {
                         case 'Office Administration': return <Briefcase />
                         case 'Engineering and CAD': return <Compass />
                         case 'Graphic Design and Animation': return <Palette />
-                        case 'IT & Networking': return <Wind aria-label="Network" />
+                        case 'IT & Networking': return <Network aria-label="Network" />
                         case 'Language Courses': return <BookOpen />
                         default: return <BookOpen />
                     }
@@ -130,7 +130,7 @@ export default function FeaturedCourses() {
                             >
                                 {/* Invisible stretched link for mobile clickability */}
                                 <span className="absolute inset-0 z-10 sm:hidden"></span>
-                                
+
                                 <div className="hidden sm:flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
                                     <span className="text-[10px] font-black tracking-widest uppercase text-[#794d00]">Explore Program</span>
                                     <div className="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center text-[#794d00] group-hover/link:bg-[#794d00] group-hover/link:text-white transition-all duration-300">

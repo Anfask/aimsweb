@@ -14,8 +14,8 @@ export default function HomeClient() {
   return (
     <div className="home-page overflow-x-hidden">
       <Hero />
-      <BrandSlider />
       <FeaturedCourses />
+      <BrandSlider />
       <WhyChooseUs />
       <Stats />
       <Testimonials />

@@ -68,7 +68,7 @@ export default function EnrollClient() {
         <main className="enroll-page min-h-screen bg-[#020617] font-figtree">
 
             {/* Hero Section with Background Image */}
-            <section className="relative min-h-screen pt-48 pb-20 overflow-hidden flex items-center">
+            <section ref={heroRef} className="relative min-h-screen pt-48 pb-20 overflow-hidden flex items-center">
                 {/* Background Image with Overlay */}
                 <div className="absolute inset-0 z-0">
                     <Image

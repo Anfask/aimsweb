@@ -101,7 +101,7 @@ function CoursesContent() {
         <div ref={containerRef} className="courses-page min-h-screen bg-[#fffbf5] font-figtree">
 
             {/* ── Hero ── */}
-            <section className="relative bg-[#fffbf5] pt-36 pb-20 overflow-hidden border-b border-slate-100/60">
+            <section className="relative bg-[#fffbf5] pt-28 pb-16 overflow-hidden border-b border-slate-100/60">
                 {/* Subtle warm background circle */}
                 <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[800px] bg-[#794d00]/[0.03] rounded-full blur-[80px] pointer-events-none" />
 
@@ -117,7 +117,7 @@ function CoursesContent() {
                             <span className="text-[#794d00]">Training Catalog</span>
                         </h1>
 
-                        <p className="hero-reveal text-slate-500 text-base sm:text-lg font-medium leading-relaxed max-w-xl">
+                        <p className="hero-reveal text-slate-500 text-sm sm:text-base font-medium leading-relaxed max-w-xl">
                             Industry-recognised certifications crafted for ambitious professionals in the UAE. Find the program that accelerates your career.
                         </p>
 
@@ -179,7 +179,7 @@ function CoursesContent() {
                 </div>
             )}
 
-            <div className="container-custom max-w-[1400px] mx-auto px-6 sm:px-8 md:px-12 py-20 space-y-28">
+            <div className="container-custom max-w-[1400px] mx-auto px-6 sm:px-8 md:px-12 py-12 md:py-16 space-y-16 md:space-y-20">
 
                 {/* ── Most Searched / Popular ── */}
                 {!loading && searchTerm === "" && popularCourses.length > 0 && (
@@ -204,46 +204,49 @@ function CoursesContent() {
                             {popularCourses.map((course, idx) => (
                                 <div
                                     key={course.id}
-                                    className="bg-white p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.02] duration-300 flex flex-col gap-6 group relative"
+                                    className="bg-white p-5 pb-3 sm:p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.01] duration-300 flex flex-col gap-3 sm:gap-6 group relative"
                                 >
                                     {/* Trending badge */}
-                                    <div className="absolute top-5 right-5 text-amber-500 bg-amber-50 p-1.5 rounded-lg">
+                                    <div className="absolute top-5 right-5 text-amber-500 bg-amber-50 p-1.5 rounded-lg z-20">
                                         <Star size={14} fill="currentColor" />
                                     </div>
 
                                     {/* Icon row */}
                                     <div className="flex items-center justify-between">
                                         <div className="text-blue-500 transform group-hover:scale-110 transition-transform duration-300">
-                                            <BookOpen size={30} />
+                                            <BookOpen size={window.innerWidth < 640 ? 24 : 32} />
                                         </div>
-                                        <span className="text-3xl font-black text-slate-100 group-hover:text-slate-200 transition-colors select-none">
+                                        <span className="text-2xl sm:text-3xl font-black text-slate-100 group-hover:text-slate-200 transition-colors select-none">
                                             0{idx + 1}
                                         </span>
                                     </div>
 
                                     {/* Content */}
-                                    <div className="space-y-2 flex-1">
-                                        <h3 className="text-[17px] font-bold text-[#0f172a] leading-[1.3]">
+                                    <div className="space-y-1 sm:space-y-3 flex-1">
+                                        <h3 className="text-[16px] sm:text-[19px] font-bold text-[#0f172a] leading-[1.3]">
                                             {course.title}
                                         </h3>
-                                        <p className="text-[12px] text-slate-400 font-bold uppercase tracking-widest">
+                                        <p className="text-[10px] text-slate-400 font-bold uppercase tracking-widest">
                                             {course.category}
                                         </p>
-                                        <p className="text-[13px] text-slate-500 font-medium leading-relaxed line-clamp-2 mt-1">
+                                        <p className="text-[12px] sm:text-[14px] text-slate-500 font-medium leading-relaxed line-clamp-2">
                                             {course.description}
                                         </p>
                                     </div>
 
-                                    {/* CTA */}
-                                    <div className="pt-4 border-t border-slate-50">
-                                        <Link
-                                            href={`/courses/${course.id}`}
-                                            className="inline-flex items-center gap-3 text-[10px] font-black tracking-widest uppercase text-[#794d00] hover:text-slate-900 transition-colors group/link"
-                                        >
-                                            Learn More
-                                            <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
-                                        </Link>
-                                    </div>
+                                    {/* CTA - Hidden on mobile, matches FeaturedCourses */}
+                                    <Link
+                                        href={`/courses/${course.id}`}
+                                        className="block group/link"
+                                    >
+                                        <span className="absolute inset-0 z-10 sm:hidden"></span>
+                                        <div className="hidden sm:flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
+                                            <span className="text-[10px] font-black tracking-widest uppercase text-[#794d00]">Learn More</span>
+                                            <div className="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center text-[#794d00] group-hover/link:bg-[#794d00] group-hover/link:text-white transition-all duration-300">
+                                                <ArrowRight size={12} className="group-hover/link:translate-x-0.5 transition-transform" />
+                                            </div>
+                                        </div>
+                                    </Link>
                                 </div>
                             ))}
                         </div>
@@ -272,7 +275,7 @@ function CoursesContent() {
                                 className="scroll-mt-40 space-y-10"
                             >
                                 {/* Category header — matching FeaturedCourses style */}
-                                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 pb-8 border-b border-slate-100">
+                                <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-4 pb-4 border-b border-slate-100">
                                     <div className="space-y-2">
                                         <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">
                                             <BookOpen size={13} className="text-blue-500" />
@@ -296,12 +299,12 @@ function CoursesContent() {
                                     {groupedCourses[cat].map((course) => (
                                         <div
                                             key={course.id}
-                                            className="group bg-white p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.01] duration-300 flex flex-col gap-6"
+                                            className="group relative bg-white p-5 pb-3 sm:p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.01] duration-300 flex flex-col gap-3 sm:gap-6"
                                         >
-                                            {/* Top */}
+                                            {/* Top row */}
                                             <div className="flex items-center justify-between">
                                                 <div className="text-blue-500 transform group-hover:scale-110 transition-transform duration-300">
-                                                    <BookOpen size={28} />
+                                                    <BookOpen size={window.innerWidth < 640 ? 24 : 32} />
                                                 </div>
                                                 <span className="px-3 py-1 bg-slate-50 text-[10px] font-black text-slate-400 uppercase tracking-widest rounded-lg group-hover:bg-blue-50 group-hover:text-blue-600 transition-colors">
                                                     {course.level}
@@ -309,31 +312,32 @@ function CoursesContent() {
                                             </div>
 
                                             {/* Content */}
-                                            <div className="space-y-2 flex-1">
-                                                <h3 className="text-[18px] font-bold text-[#0f172a] leading-[1.25]">
+                                            <div className="space-y-1 sm:space-y-3 flex-1">
+                                                <h3 className="text-[16px] sm:text-[19px] font-bold text-[#0f172a] leading-[1.25]">
                                                     {course.title}
                                                 </h3>
-                                                <p className="text-[13px] text-slate-500 font-medium leading-relaxed line-clamp-2">
+                                                <p className="text-[12px] sm:text-[14px] text-slate-500 font-medium leading-relaxed line-clamp-2">
                                                     {course.description}
                                                 </p>
+                                                <div className="flex items-center gap-2 text-[11px] sm:text-[12px] text-slate-400 font-bold mt-1 sm:mt-2">
+                                                    <Clock size={14} className="text-blue-500" />
+                                                    {course.duration}
+                                                </div>
                                             </div>
 
-                                            {/* Duration */}
-                                            <div className="flex items-center gap-2 text-[12px] text-slate-400 font-bold">
-                                                <Clock size={14} className="text-blue-500" />
-                                                {course.duration}
-                                            </div>
-
-                                            {/* CTA */}
-                                            <div className="pt-4 border-t border-slate-50">
-                                                <Link
-                                                    href={`/courses/${course.id}`}
-                                                    className="inline-flex items-center gap-3 text-[10px] font-black tracking-widest uppercase text-[#794d00] hover:text-slate-900 transition-colors group/link"
-                                                >
-                                                    View Details
-                                                    <ArrowRight size={14} className="group-hover/link:translate-x-1 transition-transform" />
-                                                </Link>
-                                            </div>
+                                            {/* CTA - Matches FeaturedCourses */}
+                                            <Link
+                                                href={`/courses/${course.id}`}
+                                                className="block group/link"
+                                            >
+                                                <span className="absolute inset-0 z-10 sm:hidden"></span>
+                                                <div className="hidden sm:flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
+                                                    <span className="text-[10px] font-black tracking-widest uppercase text-[#794d00]">View Details</span>
+                                                    <div className="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center text-[#794d00] group-hover/link:bg-[#794d00] group-hover/link:text-white transition-all duration-300">
+                                                        <ArrowRight size={12} className="group-hover/link:translate-x-0.5 transition-transform" />
+                                                    </div>
+                                                </div>
+                                            </Link>
                                         </div>
                                     ))}
                                 </div>

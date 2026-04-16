@@ -218,7 +218,12 @@ export default function Testimonials() {
                     </div>
 
                     {/* Google badge */}
-                    <div className="flex items-center gap-3 px-4 py-2.5 sm:px-5 sm:py-3 bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50">
+                    <a
+                        href={`https://search.google.com/local/reviews?placeid=${process.env.NEXT_PUBLIC_GOOGLE_PLACE_ID || 'ChIJH1GPIFlmXj4RGXfJA5vymIo'}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center gap-3 px-4 py-2.5 sm:px-5 sm:py-3 bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 hover:shadow-slate-300/60 hover:border-blue-100 transition-all duration-200 cursor-pointer"
+                    >
                         <GoogleLogo className="w-5 h-5 sm:w-6 sm:h-6" />
                         <div>
                             <div className="flex items-center gap-2">
@@ -229,7 +234,7 @@ export default function Testimonials() {
                                 Read {reviewData.totalReviews} Reviews
                             </span>
                         </div>
-                    </div>
+                    </a>
                 </div>
 
                 {/* ── Lunchbox Grid ── */}

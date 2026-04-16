@@ -53,18 +53,21 @@ export default function WhyChooseAIMS() {
                     </p>
                 </div>
 
-                {/* Top Row: 4 Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-4">
+                {/* ── Top Row: 4 Features ── */}
+                <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4 sm:gap-5 mb-4 sm:mb-5">
                     {features.slice(0, 4).map((feature, i) => (
-                        <div key={i} className="bg-white p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.01] duration-300 flex flex-col gap-6 min-h-[280px]">
-                            <div className="text-[#a3e635]">
+                        <div 
+                            key={i} 
+                            className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-md shadow-slate-200/40 hover:shadow-lg hover:shadow-slate-200/60 transition-all duration-300 flex flex-col gap-4"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                                 {feature.icon}
                             </div>
-                            <div className="space-y-4">
-                                <h3 className="text-[19px] font-bold text-[#0f172a] leading-[1.2] font-figtree">
+                            <div className="space-y-2">
+                                <h3 className="text-base sm:text-[17px] font-bold text-slate-900 leading-tight">
                                     {feature.title}
                                 </h3>
-                                <p className="text-[14px] text-slate-500 font-figtree font-medium leading-relaxed">
+                                <p className="text-[13px] text-slate-500 font-medium leading-relaxed">
                                     {feature.description}
                                 </p>
                             </div>
@@ -72,18 +75,21 @@ export default function WhyChooseAIMS() {
                     ))}
                 </div>
 
-                {/* Bottom Row: 3 Cards Centered */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-w-5xl mx-auto">
+                {/* ── Bottom Row: 3 Features Centered ── */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 max-w-[1000px] mx-auto">
                     {features.slice(4).map((feature, i) => (
-                        <div key={i} className="bg-white p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.01] duration-300 flex flex-col gap-6 min-h-[280px]">
-                            <div className="text-[#a3e635]">
+                        <div 
+                            key={i} 
+                            className="group bg-white p-5 rounded-2xl border border-slate-100 shadow-md shadow-slate-200/40 hover:shadow-lg hover:shadow-slate-200/60 transition-all duration-300 flex flex-col gap-4"
+                        >
+                            <div className="w-10 h-10 rounded-xl bg-blue-50 flex items-center justify-center text-blue-500 group-hover:scale-110 transition-transform">
                                 {feature.icon}
                             </div>
-                            <div className="space-y-4">
-                                <h3 className="text-[19px] font-bold text-[#0f172a] leading-[1.2] font-figtree">
+                            <div className="space-y-2">
+                                <h3 className="text-base sm:text-[17px] font-bold text-slate-900 leading-tight">
                                     {feature.title}
                                 </h3>
-                                <p className="text-[14px] text-slate-500 font-figtree font-medium leading-relaxed">
+                                <p className="text-[13px] text-slate-500 font-medium leading-relaxed">
                                     {feature.description}
                                 </p>
                             </div>
