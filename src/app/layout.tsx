@@ -114,6 +114,14 @@ export default function RootLayout({
             `,
           }}
         />
+
+        {/* Ahrefs Analytics */}
+        <Script
+          src="https://analytics.ahrefs.com/analytics.js"
+          data-key={process.env.NEXT_PUBLIC_AHREFS_KEY}
+          strategy="afterInteractive"
+          async
+        />
       </head>
       <body suppressHydrationWarning className={`${figtree.variable} antialiased font-figtree`}>
         <GoogleTranslate />
