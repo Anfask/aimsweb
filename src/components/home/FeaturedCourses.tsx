@@ -1,163 +1,219 @@
-"use client"
+"use client";
 
-import { useLayoutEffect, useRef } from "react"
-import Link from "next/link"
-import gsap from "gsap"
-import { useGSAP } from "@gsap/react"
-import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowRight, Calculator, Briefcase, Compass, Palette, BookOpen, Wind, MessageCircle, Network } from "lucide-react"
-import { useCourses } from "@/hooks/useCourse"
+import React, { useEffect, useRef } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { useScroll, useTransform, motion, frame, cancelFrame } from "framer-motion";
+import { ReactLenis } from "lenis/react";
+import type { LenisRef } from "lenis/react";
 
-gsap.registerPlugin(ScrollTrigger)
+import { useCourses } from "@/hooks/useCourse";
+
+interface CardProps {
+    id: number;
+    className?: string;
+    progress: any;
+    range: number[];
+    targetScale: number;
+    children?: React.ReactNode;
+}
+
+function ParallaxCardEffect({
+    id,
+    className,
+    progress,
+    range,
+    targetScale,
+    children
+}: CardProps) {
+    const scale = useTransform(progress, range, [1, targetScale]);
+
+    return (
+        <div className="sticky top-0 flex items-center justify-center w-full" style={{ height: "100vh" }}>
+            <motion.div
+                style={{
+                    scale,
+                    top: `calc(-10vh + ${id * 45}px)`
+                }}
+                className={className}>
+                {children}
+            </motion.div>
+        </div>
+    );
+}
+
+const getImageForCategory = (categoryId: string) => {
+    switch (categoryId) {
+        case "engineering-cad": 
+            return "/images/course-engineering-cad.png";
+        case "office-administration": 
+            return "/images/course-office-admin.png";
+        case "graphic-design-animation": 
+            return "/images/course-graphic-design.png";
+        case "finance-accounting": 
+            return "/images/course-finance-accounting.png";
+        case "network-it": 
+            return "/images/course-it-networking.png";
+        case "language-courses": 
+            return "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1200";
+        default: 
+            return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1200";
+    }
+};
+
+const ParallaxCardItem = ({ course, id, total, progress }: { course: any; id: number; total: number; progress: any }) => {
+    const targetScale = 1 - (total - id) * 0.05;
+
+    const themes = [
+        { bg: "bg-[#fffbf5]", text: "text-[#794d00]" }, // Brand Cream/Brown
+        { bg: "bg-[#f0f9ff]", text: "text-blue-600" },
+        { bg: "bg-[#f5f3ff]", text: "text-purple-600" },
+        { bg: "bg-[#f0fdf4]", text: "text-emerald-600" },
+        { bg: "bg-[#fff7ed]", text: "text-orange-600" },
+        { bg: "bg-[#fdf2f8]", text: "text-pink-600" },
+    ];
+    const theme = themes[id % themes.length];
+
+    return (
+        <ParallaxCardEffect
+            id={id}
+            progress={progress}
+            range={[id * (1 / total), 1]}
+            targetScale={targetScale}
+            className={`relative flex flex-col md:flex-row items-stretch w-full max-w-[1000px] h-[520px] md:h-[320px] rounded-[32px] shadow-[0_-5px_30px_-10px_rgba(0,0,0,0.1)] origin-top overflow-hidden ${theme.bg}`}
+        >
+            {/* Left Content Area */}
+            <div className="w-full md:w-[55%] flex flex-col md:flex-row items-start md:items-center p-8 md:p-10 gap-6 md:gap-8 z-10">
+                {/* Large Number */}
+                <div className={`text-4xl md:text-5xl font-black ${theme.text} shrink-0 mt-2 md:mt-0`}>
+                    0{id + 1}
+                </div>
+
+                {/* Text Content */}
+                <div className="flex flex-col justify-center">
+                    <h3 className="text-2xl md:text-2xl font-bold text-slate-900 leading-tight mb-3">
+                        {course.title}
+                    </h3>
+                    <p className="text-sm md:text-base text-slate-600 leading-relaxed line-clamp-4 md:line-clamp-4">
+                        {course.description || "Comprehensive high-impact training designed for your professional success. Equip yourself with practical skills and knowledge to excel in your career path."}
+                    </p>
+                    <Link
+                        href={`/courses?category=${encodeURIComponent(course.category)}`}
+                        className={`inline-flex items-center gap-2 mt-6 text-xs font-bold tracking-widest uppercase ${theme.text} hover:opacity-70 transition-opacity`}
+                    >
+                        Explore <ArrowRight size={14} />
+                    </Link>
+                </div>
+            </div>
+
+            {/* Right Image Area */}
+            <div className="w-full md:w-[45%] relative h-[220px] md:h-full flex-shrink-0">
+                {/* Desktop Mask (fade from left) */}
+                <div
+                    className="absolute inset-0 w-full h-full hidden md:block"
+                    style={{
+                        maskImage: 'linear-gradient(to right, transparent, black 25%)',
+                        WebkitMaskImage: 'linear-gradient(to right, transparent, black 25%)'
+                    }}
+                >
+                    <img
+                        src={getImageForCategory(course.id)}
+                        alt={course.title}
+                        className="w-full h-full object-cover object-center scale-105"
+                    />
+                </div>
+                {/* Mobile Mask (fade from top) */}
+                <div
+                    className="absolute inset-0 w-full h-full md:hidden"
+                    style={{
+                        maskImage: 'linear-gradient(to bottom, transparent, black 25%)',
+                        WebkitMaskImage: 'linear-gradient(to bottom, transparent, black 25%)'
+                    }}
+                >
+                    <img
+                        src={getImageForCategory(course.id)}
+                        alt={course.title}
+                        className="w-full h-full object-cover object-center scale-105"
+                    />
+                </div>
+            </div>
+        </ParallaxCardEffect>
+    );
+};
 
 export default function FeaturedCourses() {
-    const sectionRef = useRef<HTMLElement>(null)
-    const { courses, loading } = useCourses()
+    const lenisRef = useRef<LenisRef>(null);
+    const containerRef = useRef<HTMLDivElement>(null);
+    const { courses, loading } = useCourses();
 
-    useGSAP(() => {
-        if (loading) return
-        gsap.from(".fc-header", {
-            scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
-            y: 30,
-            opacity: 0,
-            duration: 0.8,
-            ease: "power2.out",
-            clearProps: "all"
-        })
-        gsap.from(".course-card", {
-            scrollTrigger: { trigger: ".courses-grid", start: "top 85%" },
-            y: 30,
-            opacity: 0,
-            duration: 0.8,
-            stagger: 0.1,
-            ease: "power2.out",
-            clearProps: "all"
-        })
-    }, { dependencies: [loading], scope: sectionRef })
+    const { scrollYProgress } = useScroll({
+        target: containerRef,
+        offset: ["start start", "end end"]
+    });
 
-    const getIcon = (category: string) => {
-        return (
-            <div className="w-6 h-6 sm:w-8 sm:h-8 [&>svg]:w-full [&>svg]:h-full">
-                {(() => {
-                    switch (category) {
-                        case 'Finance & Accounting': return <Calculator />
-                        case 'Office Administration': return <Briefcase />
-                        case 'Engineering and CAD': return <Compass />
-                        case 'Graphic Design and Animation': return <Palette />
-                        case 'IT & Networking': return <Network aria-label="Network" />
-                        case 'Language Courses': return <BookOpen />
-                        default: return <BookOpen />
-                    }
-                })()}
-            </div>
-        )
-    }
+    useEffect(() => {
+        function update(data: { timestamp: number }) {
+            lenisRef.current?.lenis?.raf(data.timestamp);
+        }
+        frame.update(update, true);
+        return () => cancelFrame(update);
+    }, []);
 
     if (loading) {
         return (
-            <section className="bg-[#fffbf5] py-24 md:py-32 font-figtree border-t border-slate-100/50">
-                <div className="container-custom mx-auto px-6 grid grid-cols-1 md:grid-cols-2 gap-6">
-                    {[1, 2, 3, 4].map((i) => (
-                        <div key={i} className="bg-white/50 animate-pulse h-[300px] rounded-[20px] border border-slate-100" />
-                    ))}
+            <section className="bg-white py-24 md:py-32 font-figtree">
+                <div className="container-custom mx-auto px-6 grid grid-cols-1 gap-6">
+                    <div className="h-[240px] bg-slate-100 animate-pulse rounded-[24px]" />
                 </div>
             </section>
-        )
+        );
     }
 
-    // Select the 5 main signature category overviews to feature with specific priority
-    const featuredIds = ['engineering-cad', 'office-administration', 'graphic-design-animation', 'finance-accounting', 'network-it', 'language-courses']
+    const featuredIds = ["engineering-cad", "office-administration", "graphic-design-animation", "finance-accounting", "network-it", "language-courses"];
     const featuredCourses = featuredIds
         .map(id => courses.find(c => c.id === id))
-        .filter((c): c is NonNullable<typeof c> => !!c)
+        .filter((c): c is NonNullable<typeof c> => !!c);
 
     return (
-        <section
-            ref={sectionRef}
-            className="bg-[#fffbf5] pt-6 pb-6 md:pt-12 md:pb-12 font-figtree border-t border-slate-100/50 overflow-hidden relative"
-        >
-            <div className="container-custom mx-auto px-6">
+        <>
+            <ReactLenis root options={{ autoRaf: false }} ref={lenisRef} />
+            <section className="bg-white pt-12 md:pt-32 font-figtree border-t border-slate-100/50">
+                <div className="container-custom mx-auto px-4 md:px-6">
+                    <div className="flex flex-col lg:flex-row gap-12 lg:gap-8">
 
-                {/* ── Header ── */}
-                <div className="fc-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-8 mb-8 sm:mb-12">
-                    <div className="space-y-2 sm:space-y-4">
-                        <span className="text-[#794d00] font-bold tracking-widest text-[10px] sm:text-xs uppercase flex items-center gap-2">
-                            <Wind size={12} className="text-blue-500 sm:w-[14px] sm:h-[14px]" /> Kinetic Programs
-                        </span>
-                        <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#794d00] tracking-tight uppercase max-w-xl leading-tight">
-                            Signature <span className="text-slate-900">Education.</span>
-                        </h2>
-                    </div>
-                    <p className="text-slate-600 text-base sm:text-lg max-w-xl leading-relaxed">
-                        Globally recognised certifications, expertly delivered for professionals across the UAE.
-                    </p>
-                </div>
-
-                {/* ── Cards Grid ── */}
-                <div className="courses-grid grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
-                    {featuredCourses.map((course, idx) => (
-                        <div
-                            key={course.id}
-                            className="course-card relative bg-white p-5 pb-3 sm:p-8 rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.01] duration-300 flex flex-col gap-3 sm:gap-6 group"
-                        >
-                            {/* Top row: icon + number */}
-                            <div className="flex items-center justify-between">
-                                <div className="text-blue-500 transform group-hover:scale-110 transition-transform duration-300">
-                                    {getIcon(course.category)}
-                                </div>
-                                <span className="text-2xl sm:text-3xl font-black text-slate-100 group-hover:text-slate-200 transition-colors select-none">
-                                    0{idx + 1}
+                        {/* ── Left Column: Sticky Header ── */}
+                        <div className="w-full lg:w-1/3 lg:sticky lg:top-32 h-fit flex flex-col justify-start z-20">
+                            <div>
+                                <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase mb-4 block">
+                                    Explore
                                 </span>
+                                <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1] uppercase mb-6">
+                                    <span className="text-[#794d00]">Courses</span><br /> for Every Career Goal
+                                </h2>
+                                <p className="text-slate-500 text-lg leading-relaxed max-w-sm">
+                                    Build the skills you need with expert-led training designed for real-world success.
+                                </p>
                             </div>
-
-                            {/* Content */}
-                            <div className="space-y-1 sm:space-y-3 flex-1">
-                                <h3 className="text-[15px] sm:text-[19px] font-bold text-[#0f172a] leading-[1.2]">
-                                    {course.title}
-                                </h3>
-                                <div className="relative flex items-end justify-between gap-4">
-                                    <p className="text-[11px] sm:text-[14px] text-slate-500 font-medium leading-relaxed">
-                                        {course.description || "Comprehensive high-impact training designed for your professional success in the UAE's competitive landscape."}
-                                    </p>
-                                    <ArrowRight size={16} className="sm:hidden text-blue-500 shrink-0 mb-1" />
-                                </div>
-                            </div>
-
-                            {/* CTA - Hidden on mobile, visible on desktop */}
-                            <Link
-                                href={`/courses?category=${encodeURIComponent(course.category)}`}
-                                className="block group/link"
-                            >
-                                {/* Invisible stretched link for mobile clickability */}
-                                <span className="absolute inset-0 z-10 sm:hidden"></span>
-
-                                <div className="hidden sm:flex items-center justify-between mt-auto pt-3 border-t border-slate-50">
-                                    <span className="text-[10px] font-black tracking-widest uppercase text-[#794d00]">Explore Program</span>
-                                    <div className="w-7 h-7 rounded-full bg-slate-50 flex items-center justify-center text-[#794d00] group-hover/link:bg-[#794d00] group-hover/link:text-white transition-all duration-300">
-                                        <ArrowRight size={12} className="group-hover/link:translate-x-0.5 transition-transform" />
-                                    </div>
-                                </div>
-                            </Link>
                         </div>
-                    ))}
-                </div>
 
-                {/* ── Footer bar ── */}
-                <div className="mt-6 sm:mt-16 flex flex-col md:flex-row items-center justify-between gap-6 pt-6 sm:pt-10 border-t border-slate-100/50">
-                    <div className="flex items-center gap-3 text-[#794d00] font-bold text-xs tracking-widest uppercase">
-                        <BookOpen size={18} className="text-blue-500" />
-                        Explore our complete curriculum
+                        {/* ── Right Column: Parallax Cards Area ── */}
+                        <div className="w-full lg:w-2/3" ref={containerRef}>
+                            <div className="relative w-full pb-[30vh] lg:-mt-24">
+                                {featuredCourses.map((course, idx) => (
+                                    <ParallaxCardItem
+                                        course={course}
+                                        key={course.id}
+                                        id={idx}
+                                        total={featuredCourses.length}
+                                        progress={scrollYProgress}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+
                     </div>
-                    <Link
-                        href="/courses"
-                        className="group inline-flex items-center gap-3 text-[10px] font-black tracking-widest uppercase text-[#794d00] hover:text-slate-900 transition-colors self-end md:self-auto"
-                    >
-                        Explore All Programs
-                        <ArrowRight size={14} className="group-hover:translate-x-1 transition-transform" />
-                    </Link>
                 </div>
-
-            </div>
-        </section>
-    )
+            </section>
+        </>
+    );
 }

@@ -12,7 +12,7 @@ import FAQ from "@/components/FAQ"
 
 export default function HomeClient() {
   return (
-    <div className="home-page overflow-x-hidden">
+    <div className="home-page overflow-x-clip">
       <Hero />
       <FeaturedCourses />
       <BrandSlider />
