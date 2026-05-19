@@ -44,19 +44,19 @@ function ParallaxCardEffect({
 
 const getImageForCategory = (categoryId: string) => {
     switch (categoryId) {
-        case "engineering-cad": 
+        case "engineering-cad":
             return "/images/course-engineering-cad.png";
-        case "office-administration": 
+        case "office-administration":
             return "/images/course-office-admin.png";
-        case "graphic-design-animation": 
+        case "graphic-design-animation":
             return "/images/course-graphic-design.png";
-        case "finance-accounting": 
+        case "finance-accounting":
             return "/images/course-finance-accounting.png";
-        case "network-it": 
+        case "network-it":
             return "/images/course-it-networking.png";
-        case "language-courses": 
+        case "language-courses":
             return "https://images.unsplash.com/photo-1521737604893-d14cc237f11d?auto=format&fit=crop&q=80&w=1200";
-        default: 
+        default:
             return "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&q=80&w=1200";
     }
 };
@@ -187,7 +187,7 @@ export default function FeaturedCourses() {
                                 <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase mb-4 block">
                                     Explore
                                 </span>
-                                <h2 className="text-4xl md:text-5xl lg:text-6xl font-extrabold text-slate-900 tracking-tight leading-[1.1] uppercase mb-6">
+                                <h2 className="text-2xl md:text-5xl font-bold tracking-tight uppercase max-w-2xl leading-tight">
                                     <span className="text-[#794d00]">Courses</span><br /> for Every Career Goal
                                 </h2>
                                 <p className="text-slate-500 text-lg leading-relaxed max-w-sm">

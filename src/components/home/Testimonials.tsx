@@ -151,10 +151,10 @@ export default function Testimonials() {
         // Auto-slider logic for mobile
         const interval = setInterval(() => {
             if (!scrollRef.current || window.innerWidth >= 640 || isPaused) return
-            
+
             const nextIndex = (activeDot + 1) % displayReviews.length
             const width = scrollRef.current.offsetWidth
-            
+
             scrollRef.current.scrollTo({
                 left: nextIndex * width,
                 behavior: 'smooth'
@@ -209,8 +209,7 @@ export default function Testimonials() {
                 {/* ── Header ── */}
                 <div className="t-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 sm:gap-8 mb-8 sm:mb-12">
                     <div className="space-y-2 sm:space-y-4">
-                        <span className="text-[#794d00] font-bold tracking-widest text-[10px] sm:text-xs uppercase flex items-center gap-2">
-                            <MessageCircle size={12} className="text-blue-500 sm:w-[14px] sm:h-[14px]" /> Student Success
+                        <span className="text-[#794d00] font-bold tracking-widest text-[10px] sm:text-xs uppercase flex items-center gap-2">Student Success
                         </span>
                         <h2 className="text-2xl md:text-4xl lg:text-5xl font-bold text-[#794d00] tracking-tight uppercase max-w-xl leading-tight">
                             Our Community&apos;s <span className="text-slate-900">Success Stories.</span>
@@ -240,7 +239,7 @@ export default function Testimonials() {
                 {/* ── Lunchbox Grid ── */}
                 {/* ── Mobile/Desktop Reviews Container ── */}
                 <div className="relative group/slider">
-                    <div 
+                    <div
                         ref={scrollRef}
                         onScroll={handleScroll}
                         data-lenis-prevent
@@ -248,8 +247,8 @@ export default function Testimonials() {
                     >
                         {displayReviews.map((review, i) => (
                             <div key={i} className="review-card-wrap flex-shrink-0 w-[calc(100vw-48px)] sm:w-auto snap-center">
-                                <ReviewCard 
-                                    data={review} 
+                                <ReviewCard
+                                    data={review}
                                     onExpandChange={(expanded) => setIsPaused(expanded)}
                                 />
                             </div>
@@ -259,7 +258,7 @@ export default function Testimonials() {
                     {/* Mobile Dot Indicators */}
                     <div className="flex sm:hidden justify-center gap-2 mt-4">
                         {displayReviews.map((_, i) => (
-                            <div 
+                            <div
                                 key={i}
                                 className={`w-1.5 h-1.5 rounded-full transition-all duration-300 ${activeDot === i ? 'bg-blue-500 w-4' : 'bg-slate-200'}`}
                             />
@@ -270,7 +269,6 @@ export default function Testimonials() {
                 {/* ── Footer bar ── */}
                 <div className="mt-6 sm:mt-16 flex flex-col md:flex-row items-center justify-between gap-6 pt-6 sm:pt-10 border-t border-slate-100/50">
                     <div className="flex items-center gap-3 text-[#794d00] font-bold text-xs tracking-widest uppercase">
-                        <MessageCircle size={18} className="text-blue-500" />
                         Thousands of trusted student opinions
                     </div>
                     <a
