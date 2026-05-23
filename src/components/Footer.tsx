@@ -101,7 +101,7 @@ export default function Footer() {
                     <div ref={brandRef} className="space-y-6">
                         <Link href="/" className="inline-block group">
                             <Image
-                                src="/images/aims-logo-png.png"
+                                src="/images/aims-logo.png"
                                 alt="AIMS Logo"
                                 width={200}
                                 height={70}

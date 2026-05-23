@@ -6,7 +6,7 @@ import Image from "next/image"
 import gsap from "gsap"
 import { useGSAP } from "@gsap/react"
 import { ScrollTrigger } from "gsap/ScrollTrigger"
-import { ArrowRight, BookOpen, Calendar, Quote, Star, Wind } from "lucide-react"
+import { ArrowRight, BookOpen, Calendar } from "lucide-react"
 import { blogPosts } from "@/data/blogs"
 
 gsap.registerPlugin(ScrollTrigger)
@@ -38,12 +38,11 @@ export default function BlogsClient() {
     return (
         <div ref={containerRef} className="blogs-page min-h-screen bg-[#fffbf5] font-figtree py-24 md:py-32 border-t border-slate-100/50">
             <div className="container-custom mx-auto px-6">
-                
+
                 {/* ── Header ── */}
                 <div className="blog-header flex flex-col lg:flex-row justify-between items-start lg:items-center gap-8 mb-20">
                     <div className="space-y-4">
-                        <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">
-                            <Wind size={14} className="text-blue-500" /> Kinetic Insights
+                        <span className="text-[#794d00] font-bold tracking-widest text-xs uppercase flex items-center gap-2">Kinetic Insights
                         </span>
                         <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold text-[#794d00] tracking-tight uppercase max-w-xl leading-tight">
                             Latest <span className="text-slate-900">Articles.</span>
@@ -57,8 +56,8 @@ export default function BlogsClient() {
                 {/* ── Blogs Grid ── */}
                 <div className="blogs-grid grid grid-cols-1 md:grid-cols-2 gap-6">
                     {blogPosts.map((post, idx) => (
-                        <div 
-                            key={post.id} 
+                        <div
+                            key={post.id}
                             className="blog-card group bg-white rounded-[20px] border border-slate-100 shadow-xl shadow-slate-200/50 transition-all hover:scale-[1.01] duration-300 flex flex-col overflow-hidden"
                         >
                             {/* Image Section */}
@@ -104,10 +103,10 @@ export default function BlogsClient() {
                                 <div className="pt-8 border-t border-slate-50 flex items-center justify-between">
                                     <div className="flex items-center gap-3">
                                         <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-slate-50 shadow-sm">
-                                            <Image 
-                                                src={post.author.avatar} 
-                                                alt={post.author.name} 
-                                                fill 
+                                            <Image
+                                                src={post.author.avatar}
+                                                alt={post.author.name}
+                                                fill
                                                 className="object-cover"
                                                 sizes="40px"
                                             />

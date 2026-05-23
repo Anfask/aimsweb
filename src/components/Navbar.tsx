@@ -58,7 +58,7 @@ export default function Navbar() {
                 {/* Logo */}
                 <Link href="/" className="flex items-center shrink-0">
                     <img
-                        src="/images/aims-logo-png.png"
+                        src="/images/aims-logo.png"
                         alt="AIMS Logo"
                         loading="eager"
                         fetchPriority="high"
